@@ -1,0 +1,70 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br" class="bg-base-200">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Área de membros - Grupo Enriquecedor{% endblock %}</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
+    <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
+
+    <link rel="stylesheet" href="{% static 'css/theme_changer.css' %}">
+
+    <script>
+        document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "night")
+    </script>
+    
+    <meta name="htmx-config" content='{"headers":{"X-CSRFToken":"{{ csrf_token }}"}}'>
+
+    <style>
+        trix-toolbar { 
+            background-color: #f3f4f6;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+         }
+
+        .trix-button-group {
+            background-color: white !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.375rem !important;
+            margin-bottom: 0 !important;
+        }
+        
+        trix-editor {
+            background-color: var(--fallback-b1,oklch(var(--b1)));
+            color: var(--fallback-bc,oklch(var(--bc)));
+        }
+    </style>
+
+</head>
+
+<body class="m-0 p-0 bg-base-200">
+    <main class="container bg-base-200 mx-auto flex-grow p-4 mt-6">
+        {% block content %}
+        {% endblock content %}
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-4 mt-auto">
+        <p>&copy; 2026 Grupo Enriquecedor. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+    <script src="{% static 'js/sortable_curriculum.js' %}"></script>
+    <div id="container-de-notificacoes" class="toast toast-top toast-end z-50"></div>
+</body>
+</html>

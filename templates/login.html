@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="absolute top-4 right-4 z-50">
+  {% include 'partials/_theme_changer.html' %}
+</div>
+
+
+<div class="hero bg-base-200 min-h-screen">
+  <div class="hero-content flex-col lg:flex-row-reverse">
+    <div class="text-center lg:text-left">
+      <img src="https://s3.henriquegoularte.com.br/area-membros/logo-dark.png" class="theme-img-dark w-32 h-auto" alt="Logo Dark">
+      <img src="https://s3.henriquegoularte.com.br/area-membros/logo-light.png" class="theme-img-light w-32 h-auto" alt="Logo Light">
+      <h1 class="text-5xl font-bold text-base-content">Login</h1>
+      <p class="py-7 text-base-content">
+        A única assessoria 100% na prática
+      </p>
+    </div>
+    <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+      <div class="card-body">
+        <form hx-post="{% url 'login' %}" hx-target="#mensagem-login" hx-swap="innerHTML" >{% csrf_token %}
+            <fieldset class="fieldset">
+            <label class="fieldset-legend">Email</label>
+            
+            <input type="email" name="email" class="input validator" placeholder="Email" required />
+            <div class="validator-hint hidden">Por favor, insira um e-mail válido</div>
+
+            <label class="fieldset-legend">Senha</label>
+            <input type="password" name="password" class="input validator" placeholder="Senha" required />
+            <div><a href="#" class="link link-hover">Esqueceu a senha?</a></div>
+            <button type="submit" class="btn btn-neutral mt-4">Login</button>
+            </fieldset>
+            <div id="mensagem-login" class="mt-4 text-center"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

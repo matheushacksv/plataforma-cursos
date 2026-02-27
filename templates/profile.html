@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "partials/_navbar.html" %}
+
+
+<div class="container mx-auto max-w-3xl py-10 px-4">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold">Meu Perfil</h1>
+        <p class="text-base-content/70 mt-1">Gerencie suas informações pessoais e como você aparece na plataforma.</p>
+    </div>
+
+    <div class="card bg-base-100 shadow-xl border border-base-200">
+        <div class="card-body">
+            
+            <form hx-post="{% url 'profile' %}" 
+                  hx-target="#profile-alert-container" 
+                  hx-encoding="multipart/form-data" 
+                  class="flex flex-col gap-6">
+                {% csrf_token %}
+
+                <div class="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-base-200">
+
+                    <div class="indicator mt-2">
+                        
+                        {% if user.is_staff or user.is_superuser %}
+                            <span class="indicator-item badge badge-primary font-bold shadow-sm z-10">Admin</span>
+                        {% else %}
+                            <span class="indicator-item badge badge-neutral shadow-sm z-10">Aluno</span>
+                        {% endif %}
+
+                        <div class="avatar">
+                            <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                                {% if user.avatar %}
+                                    <img src="{{ user.avatar.url }}" alt="Avatar do usuário" />
+                                {% else %}
+                                    <img src="https://ui-avatars.com/api/?name={{ user.nome|default:user.email }}&background=random" alt="Avatar Padrão" />
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div> <div class="form-control w-full max-w-xs">
+                        <label class="label">
+                            <span class="label-text font-medium">Alterar Foto de Perfil</span>
+                        </label>
+                        <input type="file" name="avatar" class="file-input file-input-bordered file-input-sm w-full" accept="image/*" />
+                        <label class="label">
+                            <span class="label-text-alt text-base-content/60">JPG, PNG ou WEBP. Máx 2MB.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <label class="form-control w-full">
+                        <div class="label"><span class="label-text font-medium">Nome Completo</span></div>
+                        <input type="text" name="nome" value="{{ user.nome|default:'' }}" class="input input-bordered w-full" placeholder="Seu nome..." required />
+                    </label>
+
+                    <label class="form-control w-full">
+                        <div class="label">
+                            <span class="label-text font-medium">E-mail</span>
+                            <span class="badge badge-ghost badge-sm">Privado</span>
+                        </div>
+                        <input type="email" value="{{ user.email }}" class="input input-bordered w-full opacity-70 cursor-not-allowed" disabled title="O e-mail não pode ser alterado por aqui." />
+                    </label>
+
+                    <label class="form-control w-full">
+                        <div class="label"><span class="label-text font-medium">Telefone / WhatsApp</span></div>
+                        <input type="text" name="phone" value="{{ user.phone|default:'' }}" class="input input-bordered w-full" placeholder="(00) 00000-0000" />
+                    </label>
+
+                </div>
+
+                <div id="profile-alert-container"></div>
+
+                <div class="card-actions justify-end mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        Salvar Alterações
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

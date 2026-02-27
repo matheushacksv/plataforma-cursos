@@ -1,0 +1,65 @@
+<div id="comments-section" class="mt-12 pt-8 border-t border-base-300">
+    <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" /></svg>
+        Dúvidas e Comentários ({{ lesson.comments.count }})
+    </h3>
+
+    <form hx-post="{% url 'add_comment' lesson.id %}" 
+          hx-target="#comments-section" 
+          hx-swap="outerHTML"
+          class="flex flex-col gap-3 mb-10">
+        {% csrf_token %}
+        <textarea name="body" class="textarea textarea-bordered w-full h-24 text-base" placeholder="Ficou com alguma dúvida? Escreva aqui..." required></textarea>
+        <div class="flex justify-end">
+            <button type="submit" class="btn btn-primary">Enviar Comentário</button>
+        </div>
+    </form>
+
+    <div class="space-y-6">
+        {% for comment in lesson.comments.all %}
+        <div class="flex gap-4">
+            
+            <div class="avatar placeholder shrink-0">
+                <div class="bg-neutral text-neutral-content rounded-full w-12 h-12">
+                    {% if comment.author.avatar %}
+                        <img src="{{ comment.author.avatar.url }}" alt="Avatar">
+                    {% else %}
+                        <span class="text-xl uppercase">{{ comment.author.nome|default:comment.author.email|slice:":1" }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flex-1 bg-base-200 rounded-2xl p-4 relative group">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="font-bold text-base-content">{{ comment.author.nome|default:comment.author.email }}</span>
+                    
+                    {% if comment.author.is_staff or comment.author.is_superuser %}
+                        <span class="badge badge-primary badge-sm text-[10px]">Admin</span>
+                    {% endif %}
+                    
+                    <span class="text-xs text-base-content/50 ml-2">{{ comment.created_at|date:"d/m/Y H:i" }}</span>
+                </div>
+                
+                <p class="text-base-content/90 whitespace-pre-wrap">{{ comment.body }}</p>
+
+                {% if user.is_staff or user.is_superuser %}
+                <button hx-post="{% url 'delete_comment' comment.id %}" 
+                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                        hx-target="#comments-section"
+                        hx-swap="outerHTML"
+                        hx-confirm="Deletar este comentário de {{ comment.author.nome|default:'este aluno' }}?"
+                        class="btn btn-circle btn-ghost btn-sm text-error absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Deletar Comentário">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+                </button>
+                {% endif %}
+
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-8 text-base-content/50 italic border-2 border-dashed border-base-300 rounded-xl">
+            Ninguém comentou nesta aula ainda. Seja o primeiro!
+        </div>
+        {% endfor %}
+    </div>
+</div>

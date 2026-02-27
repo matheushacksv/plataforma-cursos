@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "partials/_navbar.html" %}
+
+
+<div class="container mx-auto max-w-3xl py-10 px-4">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold">Configurações</h1>
+        <p class="text-base-content/70 mt-1">Gerencie a segurança da sua conta e preferências do sistema.</p>
+    </div>
+
+    <div class="card bg-base-100 shadow-xl border border-base-200 mb-8">
+        <div class="card-body">
+            <h2 class="card-title text-xl border-b border-base-200 pb-2 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                Segurança
+            </h2>
+            
+            <form id="form-password" 
+                  hx-post="{% url 'settings' %}" 
+                  hx-target="#password-alert-container" 
+                  class="flex flex-col gap-4">
+                {% csrf_token %}
+
+                <label class="form-control w-full max-w-md">
+                    <div class="label"><span class="label-text font-medium">Senha Atual</span></div>
+                    <input type="password" name="old_password" class="input input-bordered w-full" placeholder="••••••••" required />
+                </label>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+                    <label class="form-control w-full">
+                        <div class="label"><span class="label-text font-medium">Nova Senha</span></div>
+                        <input type="password" name="new_password" class="input input-bordered w-full" placeholder="••••••••" required minlength="6" />
+                    </label>
+
+                    <label class="form-control w-full">
+                        <div class="label"><span class="label-text font-medium">Confirmar Nova Senha</span></div>
+                        <input type="password" name="confirm_password" class="input input-bordered w-full" placeholder="••••••••" required minlength="6" />
+                    </label>
+                </div>
+
+                <div id="password-alert-container"></div>
+
+                <div class="mt-2">
+                    <button type="submit" class="btn btn-primary">Atualizar Senha</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div class="card bg-error/10 border border-error/20 shadow-sm mt-8">
+        <div class="card-body">
+            <h2 class="card-title text-error text-xl mb-2">Zona de Perigo</h2>
+            <p class="text-base-content/80 text-sm">
+                Ao excluir sua conta, você perderá permanentemente o acesso a todos os cursos, certificados e histórico de aulas. Esta ação não pode ser desfeita.
+            </p>
+            <div class="card-actions justify-start mt-4">
+                <button class="btn btn-error btn-outline" onclick="delete_account_modal.showModal()">
+                    Excluir Minha Conta
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<dialog id="delete_account_modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg text-error">Tem certeza absoluta?</h3>
+    <p class="py-4">Essa ação é irreversível. Para confirmar a exclusão, digite sua senha atual abaixo.</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-ghost">Cancelar</button>
+        <button class="btn btn-error" disabled>Excluir (Em breve)</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+{% endblock %}

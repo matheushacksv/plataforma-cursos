@@ -1,0 +1,36 @@
+<div x-data="{ modalEditCourse: true }" @curso-atualizado.camel.window="modalEditCourse = false">
+    <dialog class="modal backdrop-blur-sm"
+            :class="{'modal-open': modalEditCourse}"
+            @keydown.window.escape="modalEditCourse = false">
+        
+        <div class="modal-box w-11/12 max-w-2xl">
+            <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="modalEditCourse = false">✕</button>
+        
+            <form hx-post="{% url 'edit_course' curso.id %}" class="flex flex-col gap-4 mt-2">
+                {% csrf_token %}
+
+                <h3 class="text-lg font-bold mb-2">Editar Informações do Curso</h3>
+
+                <label class="form-control w-full">
+                    <div class="label"><span class="label-text font-medium">Título do Curso</span></div>
+                    <input type="text" name="title" class="input input-bordered w-full" value="{{ curso.title }}" required>
+                </label>
+
+                <label class="form-control w-full">
+                    <div class="label"><span class="label-text font-medium">Descrição</span></div>
+                    <textarea name="description" class="textarea textarea-bordered h-32" required>{{ curso.description }}</textarea>
+                </label>
+
+                <label class="form-control w-full">
+                    <div class="label"><span class="label-text font-medium">ID do produto Kiwify</span></div>
+                    <input type="text" name="id_kiwify" class="input input-bordered w-full" value="{{ curso.kiwify_product_id }}">
+                </label>
+
+                <div class="modal-action mt-6">
+                    <button type="button" class="btn btn-ghost" @click="modalEditCourse = false">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div> 
+    </dialog>
+</div>

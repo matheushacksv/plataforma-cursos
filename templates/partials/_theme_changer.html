@@ -1,0 +1,33 @@
+<div class="dropdown dropdown-end"
+     x-data="{ theme: localStorage.getItem('theme') || 'light' }"
+     x-init="
+        $watch('theme', value => {
+            localStorage.setItem('theme', value);
+            document.documentElement.setAttribute('data-theme', value);
+        })
+     ">
+    
+    <div tabindex="0" role="button" class="btn btn-ghost btn-circle" title="Escolher Tema">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" /></svg>
+    </div>
+    
+    <ul tabindex="0" class="dropdown-content bg-base-200 text-base-content rounded-box z-[1] w-52 p-2 shadow-2xl border border-base-300 mt-4">
+        <li class="menu-title px-4 py-2 text-xs font-bold uppercase opacity-50">Temas Claros</li>
+        <li><button @click="theme = 'light'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'light' ? 'active' : ''">☀️ Light (Padrão)</button></li>
+        <li><button @click="theme = 'corporate'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'corporate' ? 'active' : ''">🏢 Corporate</button></li>
+        <li><button @click="theme = 'winter'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'winter' ? 'active' : ''">❄️ Winter</button></li>
+        <li><button @click="theme = 'cupcake'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'cupcake' ? 'active' : ''">🧁 Cupcake</button></li>
+        <li><button @click="theme = 'lofi'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'lofi' ? 'active' : ''">🎶 LoFi</button></li>
+        <li><button @click="theme = 'pastel'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'pastel' ? 'active' : ''">🥟 Pastel</button></li>
+        
+        <div class="divider my-1"></div>
+        
+        <li class="menu-title px-4 py-2 text-xs font-bold uppercase opacity-50">Temas Escuros</li>
+        <li><button @click="theme = 'dark'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'dark' ? 'active' : ''">🌃 Dark</button></li>
+        <li><button @click="theme = 'halloween'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'halloween' ? 'active' : ''">🎃 Halloween</button></li>
+        <li><button @click="theme = 'night'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'night' ? 'active' : ''">🌙 Night (Azulado)</button></li>
+        <li><button @click="theme = 'dracula'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'dracula' ? 'active' : ''">🧛‍♂️ Dracula</button></li>
+        <li><button @click="theme = 'dim'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'dim' ? 'active' : ''">🌑 Dim (Suave)</button></li>
+        <li><button @click="theme = 'forest'; document.activeElement.blur()" class="btn btn-sm btn-ghost justify-start w-full" :class="theme === 'forest' ? 'active' : ''">🌲 Forest</button></li>
+    </ul>
+</div>

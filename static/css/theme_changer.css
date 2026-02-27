@@ -1,0 +1,21 @@
+
+.theme-img-light { display: block; }
+.theme-img-dark  { display: none; }
+
+html[data-theme="forest"] .theme-img-light,
+html[data-theme="halloween"] .theme-img-light,
+html[data-theme="dark"] .theme-img-light,
+html[data-theme="dracula"] .theme-img-light,
+html[data-theme="night"] .theme-img-light,
+html[data-theme="dim"] .theme-img-light {
+    display: none !important; 
+}
+
+html[data-theme="forest"] .theme-img-dark,
+html[data-theme="halloween"] .theme-img-dark,
+html[data-theme="dark"] .theme-img-dark,
+html[data-theme="dracula"] .theme-img-dark,
+html[data-theme="night"] .theme-img-dark,
+html[data-theme="dim"] .theme-img-dark {
+    display: block !important; 
+}

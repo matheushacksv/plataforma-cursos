@@ -1,0 +1,19 @@
+{% if lessons %}
+    <ul class="menu menu-sm w-full p-2">
+        <li class="menu-title px-2 py-1 text-xs opacity-50">Aulas Encontradas</li>
+
+        {% for lesson in lessons %}
+        <li>
+            <a href="{% url 'lesson_details' lesson.id %}" class="flex flex-col items-start gap-0.5 py-2 hover:bg-base-200">
+                <span class="font-semibold text-base-content text-sm">{{ lesson.title }}</span>
+                <span class="text-xs text-base-content/60">{{ lesson.module.course.title }} &bull; {{ lesson.module.title }}</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <div class="p-5 text-center flex flex-col items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-base-content/30"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+        <span class="text-sm text-base-content/60">Nenhuma aula encontrada para "<span class="font-bold">{{ query }}</span>".</span>
+    </div>
+{% endif %}

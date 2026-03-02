@@ -1,24 +1,68 @@
 <div class="w-full animate-fade-in">
-    
+
     <div class="flex items-center justify-between mb-6">
         <h3 class="text-2xl font-bold">Alunos: {{ curso.title }}</h3>
 
         <a href="{% url 'course_details' curso.id %}" class="btn btn-ghost btn-sm">
             ← Voltar ao Curso
         </a>
+        <button class="btn btn-ghost" onclick="importCsvModal.showModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            Importar em Massa
+        </button>
+
+        <dialog id="importCsvModal" class="modal">
+            <div class="modal-box">
+                <h3 class="font-bold text-lg mb-4">Importar Alunos via CSV</h3>
+                <p class="py-2 text-sm">O arquivo CSV deve conter um cabeçalho na primeira linha com os seguintes nomes
+                    precisos <span class="text-warning font-semibold">(nomes em minusculo):</span></p>
+                <div class="bg-base-200 p-3 rounded-md mb-4 font-mono text-xs overflow-x-auto text-base-content">
+                    email,nome,telefone,expiracao
+                </div>
+                <ul class="list-disc list-inside text-sm mb-6 space-y-2">
+                    <li><span class="badge badge-sm badge-neutral">email</span> <span
+                            class="text-xs font-semibold text-error">Obrigatório</span>.</li>
+                    <li><span class="badge badge-sm badge-ghost">nome</span> <span class="text-xs">Opcional</span>.</li>
+                    <li><span class="badge badge-sm badge-ghost">telefone</span> <span class="text-xs">Opcional</span>.
+                    </li>
+                    <li><span class="badge badge-sm badge-ghost">expiracao</span> ou <span
+                            class="badge badge-sm badge-ghost">expiração</span> <span class="text-xs">Opcional (Formato:
+                            AAAA-MM-DD)</span>.</li>
+                </ul>
+                <form hx-post="{% url 'import_students' curso.id %}" hx-encoding="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="file" accept=".csv" class="file-input file-input-bordered w-full mb-4"
+                        required />
+                    <div class="modal-action">
+                        <button type="button" class="btn" onclick="importCsvModal.close()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" onclick="importCsvModal.close()">Enviar e
+                            Importar</button>
+                    </div>
+                </form>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button>fechar</button>
+            </form>
+        </dialog>
     </div>
 
     <div class="card bg-base-200 border border-base-300 shadow-sm mb-8">
         <div class="card-body p-4">
             <h3 class="font-bold mb-2">Matricular Novo Aluno</h3>
 
-            <form hx-post="{% url 'add_student' curso.id %}" hx-target="#conteudo-principal" class="flex flex-col md:flex-row gap-4 items-end">{% csrf_token %}
+            <form hx-post="{% url 'add_student' curso.id %}" hx-target="#conteudo-principal"
+                class="flex flex-col md:flex-row gap-4 items-end">{% csrf_token %}
 
                 <div class="form-control w-full md:w-1/2">
                     <label class="label"><span class="label-text font-medium">E-mail do aluno</span></label>
-                    <input type="email" name="email" placeholder="Digite o e-mail do aluno.." class="input input-bordered w-full" required>
+                    <input type="email" name="email" placeholder="Digite o e-mail do aluno.."
+                        class="input input-bordered w-full" required>
                 </div>
-                
+
                 <div class="form-control w-full md:w-1/3">
                     <label class="label">
                         <span class="label-text font-medium">Acesso até (Opcional)</span>
@@ -27,7 +71,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Matricular</button>
-                
+
             </form>
 
         </div>
@@ -39,7 +83,7 @@
         <table class="table table-zebra w-full">
             <thead class="bg-base-200 text-base-content">
                 <tr>
-                    <th>Aluno</th>                    
+                    <th>Aluno</th>
                     <th>Nome</th>
                     <th>Telefone</th>
                     <th>Status</th>
@@ -55,17 +99,20 @@
                     <td>
                         <div class="flex items-center gap-3">
                             <div class="avatar placeholder">
-                                <div class="bg-neutral text-neutral-content rounded-full w-10 h-10 flex items-center justify-center overflow-hidden">
+                                <div
+                                    class="bg-neutral text-neutral-content rounded-full w-10 h-10 flex items-center justify-center overflow-hidden">
                                     {% if matricula.student.image %}
-                                        <img src="{{matricula.student.image.url}}" class="w-full h-full object-cover" alt="aluno-avatar">
+                                    <img src="{{matricula.student.image.url}}" class="w-full h-full object-cover"
+                                        alt="aluno-avatar">
                                     {% else %}
-                                        <span class="text-lg font-medium uppercase">{{ matricula.student.email|make_list|first }}</span>
+                                    <span class="text-lg font-medium uppercase">
+                                       {{ matricula.student.email|make_list|first }}</span>
                                     {% endif %}
                                 </div>
                             </div>
-                            <div>        
-                                <div class="font-bold">{{ matricula.student.email }}</div>    
-                            </div>                        
+                            <div>
+                                <div class="font-bold">{{ matricula.student.email }}</div>
+                            </div>
                         </div>
                     </td>
                     <td>
@@ -78,53 +125,52 @@
 
                     <td>
                         {% if not matricula.is_active or matricula.has_expired %}
-                            <span class="badge badge-error badge-sm badge-outline">Inativo</span>
+                        <span class="badge badge-error badge-sm badge-outline">Inativo</span>
                         {% else %}
-                            <span class="badge badge-success badge-sm badge-outline">Ativo</span>
+                        <span class="badge badge-success badge-sm badge-outline">Ativo</span>
                         {% endif %}
                     </td>
 
                     <td>
-                        <input type="date"
-                               name="end_date"
-                               value="{{matricula.end_date|date:'Y-m-d'}}"
-                               class="input input-bordered input-sm w-36"
-                               hx-post="{% url 'update_end_date' matricula.id %}"
-                               hx-trigger="blur"
-                               hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'
-                               hx-swap="none">
+                        <input type="date" name="end_date" value="{{matricula.end_date|date:'Y-m-d'}}"
+                            class="input input-bordered input-sm w-36"
+                            hx-post="{% url 'update_end_date' matricula.id %}" hx-trigger="blur"
+                            hx-headers='{"X-CSRFToken": "{{csrf_token}}"}' hx-swap="none">
                     </td>
 
                     <td>
                         <div class="flex justify-center w-full">
                             {% if matricula.is_active and not matricula.has_expired %}
-                                <div class="tooltip tooltip-top" data-tip="Remover">
-                                    <button
-                                        hx-post="{% url 'change_student_status' matricula.id %}"
-                                        hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'
-                                        hx-confirm="Tem certeza que deseja remover o acesso de {{matricula.student.email}}?"
-                                        hx-target="#conteudo-principal"
-                                        class="btn btn-error btn-sm btn-circle flex items-center justify-center">
-            
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                    </button>
-                                </div>
+                            <div class="tooltip tooltip-top" data-tip="Remover">
+                                <button hx-post="{% url 'change_student_status' matricula.id %}"
+                                    hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'
+                                    hx-confirm="Tem certeza que deseja remover o acesso de {{matricula.student.email}}?"
+                                    hx-target="#conteudo-principal"
+                                    class="btn btn-error btn-sm btn-circle flex items-center justify-center">
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
                             {% else %}
-                                <div class="tooltip tooltip-top" data-tip="Reativar">
-                                    <button
-                                        hx-post="{% url 'change_student_status' matricula.id %}"
-                                        hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'
-                                        hx-confirm="Tem certeza que deseja reativar o acesso de {{matricula.student.email}}?"
-                                        hx-target="#conteudo-principal"
-                                        class="btn btn-success btn-sm btn-circle flex items-center justify-center text-white"
-                                        >
+                            <div class="tooltip tooltip-top" data-tip="Reativar">
+                                <button hx-post="{% url 'change_student_status' matricula.id %}"
+                                    hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'
+                                    hx-confirm="Tem certeza que deseja reativar o acesso de {{matricula.student.email}}?"
+                                    hx-target="#conteudo-principal"
+                                    class="btn btn-success btn-sm btn-circle flex items-center justify-center text-white">
 
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-4 w-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                        </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="2" stroke="currentColor" class="h-4 w-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                    </svg>
 
-                                    </button>
-                                </div>
+                                </button>
+                            </div>
                             {% endif %}
 
                         </div>
@@ -133,12 +179,17 @@
                         <div class="flex justify-center w-full">
                             {% if matricula.is_active and not matricula.has_expired %}
                             <div class="tooltip tooltip-top" data-tip="Reenviar">
-                                <form hx-post="{% url 'reenviar_acesso' curso.id %}" hx-target="#container-de-notificacoes" hx-swap="beforeend" class="inline-block">{% csrf_token %}
-                                    <input type="hidden" name="student_id" value="{{ matricula.student.id }}">
+                                <form hx-post="{% url 'reenviar_acesso' curso.id %}"
+                                    hx-target="#container-de-notificacoes" hx-swap="beforeend" class="inline-block">{% csrf_token %}
                                     
-                                    <button type="submit" class="btn btn-sm btn-ghost text-info" title="Reenviar Acesso">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v8" />
+                                    <input type="hidden" name="student_id" value="{{ matricula.student.id }}">
+
+                                    <button type="submit" class="btn btn-sm btn-ghost text-info"
+                                        title="Reenviar Acesso">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 19l9 2-9-18-9 18 9-2zm0 0v8" />
                                         </svg>
                                     </button>
                                 </form>
@@ -152,7 +203,7 @@
                         Nenhum aluno matriculado neste curso ainda.
                     </td>
                 </tr>
-                {% endfor %}                    
+                {% endfor %}
             </tbody>
 
         </table>

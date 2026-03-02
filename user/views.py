@@ -3,6 +3,9 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from .models import CustomUser
+from .tasks import send_password_reset_email
+import secrets
 
 def login_view(request):
 
@@ -99,5 +102,35 @@ def settings_view(request):
         ''')
     return render(request, 'settings.html')
                             
+def forgot_password_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+
+        try:
+            user = CustomUser.objects.get(email=email)
+            senha_aleatoria = secrets.token_urlsafe(16)
+            user.set_password(senha_aleatoria)
+            user.save()
+            send_password_reset_email.delay(user.email, senha_aleatoria)
+            return HttpResponse('''
+                <div class="alert alert-success shadow-sm mt-4 animate-fade-in text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>Senha alterada com sucesso!</span>
+                </div>
+                <a href="/login/" class="btn btn-info mt-4 w-full">
+                    Voltar para o login
+                </a>
+            ''')
+            
+        except CustomUser.DoesNotExist:
+            return HttpResponse('''
+                <div class="alert alert-error shadow-sm mt-4 animate-fade-in text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>E-mail não encontrado.</span>
+                </div>
+            ''')
+
+    return render(request, 'forgot_password.html')
+
 
 

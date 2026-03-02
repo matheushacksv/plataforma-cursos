@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Login - Grupo Enriquecedor{% endblock %}
+
 {% block content %}
+
 
 <div class="absolute top-4 right-4 z-50">
   {% include 'partials/_theme_changer.html' %}
@@ -29,7 +32,7 @@
 
             <label class="fieldset-legend">Senha</label>
             <input type="password" name="password" class="input validator" placeholder="Senha" required />
-            <div><a href="#" class="link link-hover">Esqueceu a senha?</a></div>
+            <div><a href="{% url 'forgot_password' %}" class="link link-hover">Esqueceu a senha?</a></div>
             <button type="submit" class="btn btn-neutral mt-4">Login</button>
             </fieldset>
             <div id="mensagem-login" class="mt-4 text-center"></div>

@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import secrets
 from django.conf import settings
+import csv
 
 
 @login_required(login_url='/login/')
@@ -242,7 +243,7 @@ def add_student(request, curso_id):
             )
 
             if created:
-                senha_aleatoria = secrets.token_urlsafe(8)
+                senha_aleatoria = secrets.token_urlsafe(16)
                 user.set_password(senha_aleatoria)
                 user.save()
 
@@ -331,7 +332,7 @@ def reenviar_acesso(request, curso_id):
 
         aluno = get_object_or_404(CustomUser, id=student_id)
 
-        senha_aleatoria = secrets.token_urlsafe(8)
+        senha_aleatoria = secrets.token_urlsafe(16)
         aluno.set_password(senha_aleatoria)
         aluno.save()
 
@@ -551,6 +552,56 @@ def search_lessons(request):
 
     return render(request, 'partials/_search_results.html', {'lessons': lessons, 'query': query})
 
+@login_required(login_url='/login/')
+def import_students(request, curso_id):
+    if request.method == 'POST' and request.user.is_staff:
+        curso = get_object_or_404(Course, id=curso_id)
+        file = request.FILES.get('file')
+
+        if not file:
+            return HttpResponse('Arquivo não encontrado', status=400)
+        
+        if not file.name.endswith('.csv'):
+            return HttpResponse('Arquivo inválido', status=400)
+        
+        reader = csv.DictReader(file.read().decode('utf-8').splitlines())   
+
+        for row in reader:
+            email = row.get('email') or row.get('e-mail')
+            nome = row.get('nome')
+            telefone = row.get('telefone')
+            expiracao_str = row.get('expiracao') or row.get('expiração')
+            expiracao = parse_date(expiracao_str.strip()) if expiracao_str and expiracao_str.strip() else None
+
+            if not email:
+                continue
+
+            user, created = CustomUser.objects.get_or_create(
+                email=email,
+                defaults={
+                    'nome': nome,
+                    'phone': telefone
+                }
+            )
+
+            Enrollment.objects.get_or_create(
+                student=user,
+                course=curso,
+                defaults={'is_active': True, 'end_date': expiracao}
+            )
+
+            if created:
+                senha_temporaria = secrets.token_urlsafe(16)
+                user.set_password(senha_temporaria)
+                user.save()
+
+                enviar_email_1_acesso.delay(email, senha_temporaria)
+
+        response = HttpResponse(status=204)
+        response['HX-Trigger'] = 'gradeAtualizada'
+        return response
+    return HttpResponse(status=400)
+
 @csrf_exempt
 @require_POST
 def webhook_kiwify(request):
@@ -584,7 +635,7 @@ def webhook_kiwify(request):
                 if hasattr(user, 'username'):
                     user.username = email
 
-                senha_temporaria = secrets.token_urlsafe(8)
+                senha_temporaria = secrets.token_urlsafe(16)
                 user.set_password(senha_temporaria)
                 user.save()
 

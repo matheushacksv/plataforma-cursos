@@ -5,8 +5,10 @@
 <div class="navbar bg-base-100 rounded-box shadow-sm">
   <div class="flex-1">
     <a class="btn btn-ghost text-xl" href="{% url 'dashboard' %}">
-      <img src="https://s3.henriquegoularte.com.br/area-membros/logo-dark.png" class="theme-img-dark w-32 h-auto" alt="Logo Dark">
-      <img src="https://s3.henriquegoularte.com.br/area-membros/logo-light.png" class="theme-img-light w-32 h-auto" alt="Logo Light">
+      <img src="https://s3.henriquegoularte.com.br/area-membros/logo-dark.png" class="theme-img-dark w-32 h-auto"
+        alt="Logo Dark">
+      <img src="https://s3.henriquegoularte.com.br/area-membros/logo-light.png" class="theme-img-light w-32 h-auto"
+        alt="Logo Light">
     </a>
   </div>
   <div class="flex-none gap-2">
@@ -14,260 +16,249 @@
   </div>
   <div class="flex gap-2">
     {% if user.is_staff %}
-      {% if request.resolver_match.url_name == 'dashboard' %}
-      <div x-data="{ modalAberto: false }" class="mr-6">
+    {% if request.resolver_match.url_name == 'dashboard' %}
+    <div x-data="{ modalAberto: false }" class="mr-6">
 
-        <button type="button" class="btn btn-primary shrink-0 whitespace-nowrap flex-nowrap" @click="modalAberto = true">
-          + Curso
-        </button>
+      <button type="button" class="btn btn-primary shrink-0 whitespace-nowrap flex-nowrap" @click="modalAberto = true">
+        + Curso
+      </button>
 
-        <dialog class="modal backdrop-blur-sm" 
-                :class="{ 'modal-open': modalAberto }" 
-                @keydown.window.escape="modalAberto = false">
-          
-          <div class="modal-box">
+      <dialog class="modal backdrop-blur-sm" :class="{ 'modal-open': modalAberto }"
+        @keydown.window.escape="modalAberto = false">
+
+        <div class="modal-box">
             <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="modalAberto = false">
-              ✕
-            </button>
-            
+            ✕
+          </button>
+
           <form id="form-curso" hx-post="{% url 'dashboard' %}" hx-target="#mensagem-curso" hx-swap="innerHTML" hx-encoding="multipart/form-data">
-                {% csrf_token %}
-                
-                <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-6 flex flex-col gap-4 mt-4">
-                  <legend class="fieldset-legend text-lg font-bold">Detalhes do curso</legend>
+            {% csrf_token %}
 
-                  <label class="form-control w-full">
-                    <div class="label">
-                      <span class="label-text font-medium">Título</span>
-                    </div>
-                    
-                    <div class="indicator w-full">
-                      <span class="indicator-item badge badge-secondary badge-sm">Obrigatório</span>
-                      <input type="text" name="titulo" class="input input-bordered w-full" placeholder="Meu curso" required/>
-                    </div>
-                  </label>
+            <fieldset
+              class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-6 flex flex-col gap-4 mt-4">
+              <legend class="fieldset-legend text-lg font-bold">Detalhes do curso</legend>
 
-                  <label class="form-control w-full">
-                    <div class="label">
-                      <span class="label-text font-medium">Imagem do curso</span>
-                    </div>
-                    <input type="file" name="imagem" class="file-input file-input-bordered w-full" />
-                  </label>
+              <label class="form-control w-full">
+                <div class="label">
+                  <span class="label-text font-medium">Título</span>
+                </div>
 
-                  <label class="form-control w-full">
-                    <div class="label">
-                      <span class="label-text font-medium">Descrição</span>
-                    </div>
+                <div class="indicator w-full">
+                  <span class="indicator-item badge badge-secondary badge-sm">Obrigatório</span>
+                  <input type="text" name="titulo" class="input input-bordered w-full" placeholder="Meu curso"
+                    required />
+                </div>
+              </label>
+
+              <label class="form-control w-full">
+                <div class="label">
+                  <span class="label-text font-medium">Imagem do curso</span>
+                </div>
+                <input type="file" name="imagem" class="file-input file-input-bordered w-full" />
+              </label>
+
+              <label class="form-control w-full">
+                <div class="label">
+                  <span class="label-text font-medium">Descrição</span>
+                </div>
                     <textarea name="descricao" class="textarea textarea-bordered h-24 w-full" placeholder="Descreva o curso aqui..."></textarea>
-                  </label>
+              </label>
 
-                  <label class="form-control w-full">
-                    <div class="label">
-                      <span class="label-text font-medium">ID do produto Kiwify</span>
-                    </div>
-                    <input type="text" name="id_kiwify" class="input input-bordered w-full">
-                  </label>
+              <label class="form-control w-full">
+                <div class="label">
+                  <span class="label-text font-medium">ID do produto Kiwify</span>
+                </div>
+                <input type="text" name="id_kiwify" class="input input-bordered w-full">
+              </label>
 
-                    
-                  <div class="w-full" x-data="{ selecionadas: [], max: 3 }">
-                    
-                    <label class="form-control w-full">
-                      <div class="label flex justify-between w-full">
-                        <span class="label-text font-medium">Categorias (Máximo 3)</span>
-                      </div>
-                      
-                      <div class="indicator w-full">
-                        <span class="indicator-item badge badge-secondary badge-sm z-10">Obrigatório</span>
-                        
-                        <details class="dropdown w-full">
-                          <summary class="btn w-full justify-start font-normal border-base-content/20 bg-base-100 hover:bg-base-200">
-                            <span x-text="selecionadas.length > 0 ? selecionadas.length + ' categoria(s) selecionada(s)' : 'Escolher categorias ▾'"></span>
-                          </summary>
-                          
-                          <ul class="dropdown-content z-50 menu p-2 shadow-xl bg-base-200 rounded-box w-full mt-1 max-h-48 overflow-y-auto flex-nowrap border border-base-300">
-                            
-                            <li>
-                              <label class="label cursor-pointer justify-start gap-3" 
-                                     :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('DEV') }">
-                                <input type="checkbox" name="categoria" value="DEV" 
-                                       class="checkbox checkbox-sm checkbox-primary" 
-                                       x-model="selecionadas" 
-                                       :disabled="selecionadas.length >= max && !selecionadas.includes('DEV')" />
-                                <span class="label-text">Desenvolvimento</span>
-                              </label>
-                            </li>
 
-                            <li>
-                              <label class="label cursor-pointer justify-start gap-3"
-                                     :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('SAL') }">
-                                <input type="checkbox" name="categoria" value="SAL" 
-                                       class="checkbox checkbox-sm checkbox-primary" 
-                                       x-model="selecionadas" 
-                                       :disabled="selecionadas.length >= max && !selecionadas.includes('SAL')" />
-                                <span class="label-text">Vendas e Negociação</span>
-                              </label>
-                            </li>
+              <div class="w-full" x-data="{ selecionadas: [], max: 3 }">
 
-                            <li>
-                              <label class="label cursor-pointer justify-start gap-3"
-                                     :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('LDR') }">
-                                <input type="checkbox" name="categoria" value="LDR" 
-                                       class="checkbox checkbox-sm checkbox-primary" 
-                                       x-model="selecionadas" 
-                                       :disabled="selecionadas.length >= max && !selecionadas.includes('LDR')" />
-                                <span class="label-text">Liderança e Gestão</span>
-                              </label>
-                            </li>
-
-                            <li>
-                              <label class="label cursor-pointer justify-start gap-3"
-                                     :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('CUS') }">
-                                <input type="checkbox" name="categoria" value="CUS" 
-                                       class="checkbox checkbox-sm checkbox-primary" 
-                                       x-model="selecionadas" 
-                                       :disabled="selecionadas.length >= max && !selecionadas.includes('CUS')" />
-                                <span class="label-text">Sucesso do Cliente</span>
-                              </label>
-                            </li>
-
-                            <li>
-                              <label class="label cursor-pointer justify-start gap-3"
-                                     :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('BUS') }">
-                                <input type="checkbox" name="categoria" value="BUS" 
-                                       class="checkbox checkbox-sm checkbox-primary" 
-                                       x-model="selecionadas" 
-                                       :disabled="selecionadas.length >= max && !selecionadas.includes('BUS')" />
-                                <span class="label-text">Negócios</span>
-                              </label>
-                            </li>
-                            
-                            <li>
-                              <label class="label cursor-pointer justify-start gap-3"
-                                     :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('MKT') }">
-                                <input type="checkbox" name="categoria" value="MKT" 
-                                       class="checkbox checkbox-sm checkbox-primary" 
-                                       x-model="selecionadas" 
-                                       :disabled="selecionadas.length >= max && !selecionadas.includes('MKT')" />
-                                <span class="label-text">Marketing</span>
-                              </label>
-                            </li>    
-                            
-                            <li>
-                              <label class="label cursor-pointer justify-start gap-3"
-                                     :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('FIN') }">
-                                <input type="checkbox" name="categoria" value="FIN" 
-                                       class="checkbox checkbox-sm checkbox-primary" 
-                                       x-model="selecionadas" 
-                                       :disabled="selecionadas.length >= max && !selecionadas.includes('FIN')" />
-                                <span class="label-text">Finanças</span>
-                              </label>
-                            </li>       
-                            
-                            <li>
-                              <label class="label cursor-pointer justify-start gap-3"
-                                     :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('OTH') }">
-                                <input type="checkbox" name="categoria" value="OTH" 
-                                       class="checkbox checkbox-sm checkbox-primary" 
-                                       x-model="selecionadas" 
-                                       :disabled="selecionadas.length >= max && !selecionadas.includes('OTH')" />
-                                <span class="label-text">Outros</span>
-                              </label>
-                            </li>                              
-                            </ul>
-                        </details>
-                      </div>
-                    </label>
-
-                  </div>
-                  <div class="form-control w-fit">
-                    <label class="label cursor-pointer gap-4">
-                      <span class="label-text font-medium">Ativo</span>
-                      <input type="checkbox" name="ativo" checked="checked" class="toggle toggle-success" />
-                    </label>
+                <label class="form-control w-full">
+                  <div class="label flex justify-between w-full">
+                    <span class="label-text font-medium">Categorias (Máximo 3)</span>
                   </div>
 
-                  <div class="modal-action mt-6">
-                    <button type="button" class="btn btn-ghost hover:bg-error hover:text-white transition-colors" @click="modalAberto = false">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar</button>
+                  <div class="indicator w-full">
+                    <span class="indicator-item badge badge-secondary badge-sm z-10">Obrigatório</span>
+
+                    <details class="dropdown w-full">
+                      <summary
+                        class="btn w-full justify-start font-normal border-base-content/20 bg-base-100 hover:bg-base-200">
+                        <span
+                          x-text="selecionadas.length > 0 ? selecionadas.length + ' categoria(s) selecionada(s)' : 'Escolher categorias ▾'"></span>
+                      </summary>
+
+                      <ul
+                        class="dropdown-content z-50 menu p-2 shadow-xl bg-base-200 rounded-box w-full mt-1 max-h-48 overflow-y-auto flex-nowrap border border-base-300">
+
+                        <li>
+                          <label class="label cursor-pointer justify-start gap-3"
+                            :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('DEV') }">
+                            <input type="checkbox" name="categoria" value="DEV"
+                              class="checkbox checkbox-sm checkbox-primary" x-model="selecionadas"
+                              :disabled="selecionadas.length >= max && !selecionadas.includes('DEV')" />
+                            <span class="label-text">Desenvolvimento</span>
+                          </label>
+                        </li>
+
+                        <li>
+                          <label class="label cursor-pointer justify-start gap-3"
+                            :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('SAL') }">
+                            <input type="checkbox" name="categoria" value="SAL"
+                              class="checkbox checkbox-sm checkbox-primary" x-model="selecionadas"
+                              :disabled="selecionadas.length >= max && !selecionadas.includes('SAL')" />
+                            <span class="label-text">Vendas e Negociação</span>
+                          </label>
+                        </li>
+
+                        <li>
+                          <label class="label cursor-pointer justify-start gap-3"
+                            :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('LDR') }">
+                            <input type="checkbox" name="categoria" value="LDR"
+                              class="checkbox checkbox-sm checkbox-primary" x-model="selecionadas"
+                              :disabled="selecionadas.length >= max && !selecionadas.includes('LDR')" />
+                            <span class="label-text">Liderança e Gestão</span>
+                          </label>
+                        </li>
+
+                        <li>
+                          <label class="label cursor-pointer justify-start gap-3"
+                            :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('CUS') }">
+                            <input type="checkbox" name="categoria" value="CUS"
+                              class="checkbox checkbox-sm checkbox-primary" x-model="selecionadas"
+                              :disabled="selecionadas.length >= max && !selecionadas.includes('CUS')" />
+                            <span class="label-text">Sucesso do Cliente</span>
+                          </label>
+                        </li>
+
+                        <li>
+                          <label class="label cursor-pointer justify-start gap-3"
+                            :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('BUS') }">
+                            <input type="checkbox" name="categoria" value="BUS"
+                              class="checkbox checkbox-sm checkbox-primary" x-model="selecionadas"
+                              :disabled="selecionadas.length >= max && !selecionadas.includes('BUS')" />
+                            <span class="label-text">Negócios</span>
+                          </label>
+                        </li>
+
+                        <li>
+                          <label class="label cursor-pointer justify-start gap-3"
+                            :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('MKT') }">
+                            <input type="checkbox" name="categoria" value="MKT"
+                              class="checkbox checkbox-sm checkbox-primary" x-model="selecionadas"
+                              :disabled="selecionadas.length >= max && !selecionadas.includes('MKT')" />
+                            <span class="label-text">Marketing</span>
+                          </label>
+                        </li>
+
+                        <li>
+                          <label class="label cursor-pointer justify-start gap-3"
+                            :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('FIN') }">
+                            <input type="checkbox" name="categoria" value="FIN"
+                              class="checkbox checkbox-sm checkbox-primary" x-model="selecionadas"
+                              :disabled="selecionadas.length >= max && !selecionadas.includes('FIN')" />
+                            <span class="label-text">Finanças</span>
+                          </label>
+                        </li>
+
+                        <li>
+                          <label class="label cursor-pointer justify-start gap-3"
+                            :class="{ 'opacity-50 cursor-not-allowed': selecionadas.length >= max && !selecionadas.includes('OTH') }">
+                            <input type="checkbox" name="categoria" value="OTH"
+                              class="checkbox checkbox-sm checkbox-primary" x-model="selecionadas"
+                              :disabled="selecionadas.length >= max && !selecionadas.includes('OTH')" />
+                            <span class="label-text">Outros</span>
+                          </label>
+                        </li>
+                      </ul>
+                    </details>
                   </div>
+                </label>
 
-                  <div id="mensagem-curso"></div>
-                </fieldset>
-              </form>            
+              </div>
+              <div class="form-control w-fit">
+                <label class="label cursor-pointer gap-4">
+                  <span class="label-text font-medium">Ativo</span>
+                  <input type="checkbox" name="ativo" checked="checked" class="toggle toggle-success" />
+                </label>
+              </div>
 
-          </div>
+              <div class="modal-action mt-6">
+                <button type="button" class="btn btn-ghost hover:bg-error hover:text-white transition-colors"
+                  @click="modalAberto = false">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+              </div>
 
-          <div class="modal-backdrop bg-black/50"></div>
+              <div id="mensagem-curso"></div>
+            </fieldset>
+          </form>
 
-        </dialog>
-
-      </div>
-      {% endif %}
-    {% endif %}
-    <div class="relative w-full max-w-sm ml-4" x-data="{ open: false }">
-    
-    <div class="relative">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg class="h-4 w-4 text-base-content/50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
         </div>
-        
-        <input type="text"
-               name="q"
-               placeholder="Procurar aula..."
-               class="input input-sm input-bordered rounded-full w-full pl-9 bg-base-200 focus:bg-base-100 transition-colors"
-               autocomplete="off"
-               @input="open = $event.target.value.length > 0"
-               @click="open = $event.target.value.length > 0"
-               @click.outside="open = false"
-               hx-get="{% url 'search_lessons' %}"
-               hx-trigger="input changed delay:300ms, search"
-               hx-target="#search-dropdown-results">
-    </div>
 
-    <div x-show="open"
-         style="display: none;"
-         class="absolute top-full right-0 mt-2 w-full md:w-[400px] bg-base-100 rounded-box shadow-2xl border border-base-300 z-50 max-h-96 overflow-y-auto"
-         id="search-dropdown-results">
-         </div>
-    
+        <div class="modal-backdrop bg-black/50"></div>
+
+      </dialog>
+
     </div>
-    <div class="dropdown dropdown-end">
+    {% endif %}
+    {% endif %}
+
+    <div class="relative w-full max-w-sm ml-4" x-data="{ open: false }">
+
+      <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <svg class="h-4 w-4 text-base-content/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+
+        <input type="text" name="q" placeholder="Procurar aula..."
+          class="input input-sm input-bordered rounded-full w-full pl-9 bg-base-200 focus:bg-base-100 transition-colors"
+          autocomplete="off" @input="open = $event.target.value.length > 0"
+          @click="open = $event.target.value.length > 0" @click.outside="open = false"
+          hx-get="{% url 'search_lessons' %}" hx-trigger="input changed delay:300ms, search"
+          hx-target="#search-dropdown-results">
+      </div>
+
+      <div x-show="open" style="display: none;"
+        class="absolute top-full right-0 mt-2 w-full md:w-[400px] bg-base-100 rounded-box shadow-2xl border border-base-300 z-50 max-h-96 overflow-y-auto"
+        id="search-dropdown-results">
+      </div>
+
+    </div>
+    <div class="dropdown dropdown-end" x-data="{ modalSuporte: false }">
       <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
         <div class="w-10 rounded-full">
-            {% if user.avatar %}
-                <img
-                    alt="User avatar"
-                    src="{{user.avatar.url}}" />
-            {% else %}
-                <img
-                    alt="Avatar default"
-                    src="https://s3.henriquegoularte.com.br/area-membros/avatar.jpg"
-                    class="w-full h-full object-cover"/>
-            {% endif %}
+          {% if user.avatar %}
+          <img alt="User avatar" src="{{user.avatar.url}}" />
+          {% else %}
+          <img alt="Avatar default" src="https://s3.henriquegoularte.com.br/area-membros/avatar.jpg"
+            class="w-full h-full object-cover" />
+          {% endif %}
         </div>
       </div>
-      <ul
-        tabindex="-1"
-        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[100] mt-3 w-52 p-2 shadow">
+      <ul tabindex="-1" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[100] mt-3 w-52 p-2 shadow">
         <li>
           <a href="{% url 'profile' %}" class="justify-between">Perfil</a>
         </li>
         <li><a href="{% url 'settings' %}">Configurações</a></li>
+        <li><a @click="modalSuporte = true" class="cursor-pointer">Suporte</a></li>
         <li>
-            <a class="justify-between hover:bg-error hover:text-white transition-colors" href="{% url 'logout' %}">
-                Logout
-                <span class="badge badge-ghost bg-transparent border-0 p-0">
-                    <img src="https://s3.henriquegoularte.com.br/area-membros/logout-light.png" 
-                         alt="Sair light"
-                         class="theme-img-light w-5 h-5 object-contain" />
+          <a class="justify-between hover:bg-error hover:text-white transition-colors" href="{% url 'logout' %}">
+            Logout
+            <span class="badge badge-ghost bg-transparent border-0 p-0">
+              <img src="https://s3.henriquegoularte.com.br/area-membros/logout-light.png" alt="Sair light"
+                class="theme-img-light w-5 h-5 object-contain" />
 
-                    <img src="https://s3.henriquegoularte.com.br/area-membros/logout-dark.png" 
-                         alt="Sair dark"
-                         class="theme-img-dark w-5 h-5 object-contain" />
-                </span>
-            </a>
+              <img src="https://s3.henriquegoularte.com.br/area-membros/logout-dark.png" alt="Sair dark"
+                class="theme-img-dark w-5 h-5 object-contain" />
+            </span>
+          </a>
         </li>
       </ul>
+      {% include 'partials/_suport_modal.html' %}
     </div>
   </div>
 </div>

@@ -1,3 +1,4 @@
+from area.views import suport_ticket, listar_tickets, ticket_detail
 from django.urls import path
 from .views import *
 
@@ -30,5 +31,8 @@ urlpatterns = [
     path('course/<int:curso_id>/reenviar-acesso', reenviar_acesso, name='reenviar_acesso'),
     path('api/webhooks/kiwify/', webhook_kiwify, name='webhook_kiwify'),
     path('course/<int:curso_id>/import-students/', import_students, name='import_students'), 
+    path('tickets/', suport_ticket, name='suport_ticket'),
+    path('tickets/list/', listar_tickets, name='listar_tickets'),
+    path('tickets/<int:ticket_id>/', ticket_detail, name='ticket_detail'),
 ]
 

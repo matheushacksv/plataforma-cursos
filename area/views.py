@@ -1,3 +1,4 @@
+from area.models import SuportTicket, TicketResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from area.models import Course, Module, Lesson, Enrollment, LessonProgress, LessonMaterial, LessonComment
@@ -652,6 +653,27 @@ def webhook_kiwify(request):
                 defaults={'is_active': True}
             )
             return JsonResponse({'status': 'matricula_criada_com_sucesso'}, status=200)
+
+        elif event_type == 'refunded':
+            customer_data = payload.get('Customer', {})
+            product_data = payload.get('Product', {})
+
+            email = customer_data.get('email')
+            kiwify_id = product_data.get('product_id')
+
+            if not email or not kiwify_id:
+                return JsonResponse({'erro': 'Faltam dados do aluno ou produto'}, status=400)
+
+            user = CustomUser.objects.filter(email=email).first()
+
+            if user:
+                Enrollment.objects.filter(
+                    student=user,
+                    course__kiwify_product_id=kiwify_id
+                ).update(is_active=False)
+
+                return JsonResponse({'status': 'matricula_desativada'}, status=200)
+            
         return JsonResponse({'status': 'evento_ignorado'}, status=200)
 
     except json.JSONDecodeError:
@@ -659,4 +681,39 @@ def webhook_kiwify(request):
     except Exception as e:
         return JsonResponse({'erro': str(e)}, status=500)
 
+@login_required(login_url='/login/')
+def suport_ticket(request):
+    if request.method == 'POST':
+        user = request.user
+        media = request.FILES.get('anexo')
+        
+        try:
+            ticket = SuportTicket.objects.create(
+                usuario=user,
+                assunto=request.POST.get('assunto'),
+                categoria=request.POST.get('categoria'),
+                detalhes=request.POST.get('detalhes'),
+                media_ticket=media,        
+            )
 
+            return HttpResponse('''
+            <div class="alert alert-success shadow-sm mt-4 animate-fade-in text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-5 w-5" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>Ticket criado com sucesso!</span>
+                <script>document.getElementById('form-suporte').reset();</script>
+            </div>''')
+    
+        except Exception as e:
+            return HttpResponse(f'Erro ao criar ticket: {str(e)}', status=500)
+
+
+@login_required(login_url='/login/')
+def listar_tickets(request):
+    tickets = SuportTicket.objects.filter(usuario=request.user).order_by('-created_at')
+    return render(request, 'partials/_tickets_list.html', {'tickets': tickets})
+
+
+@login_required(login_url='/login/')
+def ticket_detail(request, ticket_id):
+    ticket = get_object_or_404(SuportTicket, id=ticket_id, usuario=request.user)
+    return render(request, 'partials/_ticket_detail.html', {'ticket': ticket})

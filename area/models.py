@@ -1,3 +1,4 @@
+from user.models import CustomUser
 from django.db import models
 from django.conf import settings
 from datetime import date
@@ -164,3 +165,56 @@ class LessonComment(models.Model):
 
     def __str__(self):
         return f'Comentário de {self.author.nome} na aula {self.lesson.title}'
+
+
+class SuportTicket(models.Model):
+
+    class Categories(models.TextChoices):
+        DUVIDAS = 'duvidas', 'Dúvidas de Uso e Configuração'
+        BUGS = 'bugs', 'Problemas Técnicos e Bugs'
+        FINANCEIRO = 'financeiro', 'Financeiro e Faturamento'
+        CONTA = 'conta', 'Gestão de Conta e Acessos'
+        SUGESTOES = 'sugestoes', 'Sugestões de Melhoria'
+
+    class Status(models.TextChoices):
+        ABERTO = 'aberto', 'Aberto'
+        EM_ANDAMENTO = 'em_andamento', 'Em andamento'
+        RESOLVIDO = 'resolvido', 'Resolvido'
+
+    usuario = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tickets')
+    assunto = models.CharField(max_length=100)
+    categoria = models.CharField(
+        max_length=100,
+        choices=Categories.choices,
+        )
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.ABERTO,
+    )
+    detalhes = models.TextField()
+    media_ticket = models.FileField(upload_to='tickets/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Ticket de Suporte'
+        verbose_name_plural = 'Tickets de Suporte'
+
+    def __str__(self):
+        return f'[{self.get_status_display()}] {self.assunto}'
+
+
+class TicketResponse(models.Model):
+    ticket = models.ForeignKey(SuportTicket, on_delete=models.CASCADE, related_name='respostas')
+    autor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='respostas_tickets')
+    mensagem = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+        verbose_name = 'Resposta'
+        verbose_name_plural = 'Respostas'
+
+    def __str__(self):
+        return f'Resposta de {self.autor.email} em {self.created_at:%d/%m/%Y %H:%M}'

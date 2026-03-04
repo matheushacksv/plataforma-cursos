@@ -7,130 +7,146 @@
 {% include "partials/_navbar.html" %}
 
 
-<div class="drawer lg:drawer-open rounded-box border border-base-300 bg-base-100 mt-2 shadow-xl" style="min-height: calc(100vh - 8rem);">
-    
+<div class="drawer lg:drawer-open glass-panel-base rounded-2xl border border-white/10 mt-2 shadow-2xl bg-black/20"
+    style="min-height: calc(100vh - 8rem);">
+
     <input id="drawer-modulos" type="checkbox" class="drawer-toggle" />
-    
+
     <div class="drawer-content flex flex-col p-6">
-        
+
         <div class="flex items-center gap-3 mb-6 lg:hidden">
-            <label for="drawer-modulos" class="btn btn-primary btn-sm drawer-button shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+            <label for="drawer-modulos"
+                class="btn btn-sm glass-panel border border-white/10 text-white rounded-lg drawer-button shrink-0 hover:bg-white/10 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
                 Ver Módulos
             </label>
-            <h2 class="font-bold text-lg truncate">{{ curso.title }}</h2>
-            
+            <h2 class="font-heading font-medium text-lg text-white truncate">{{ curso.title }}</h2>
+
             {% if request.user.is_staff %}
-            <button hx-get="{% url 'edit_course' curso.id %}" hx-target="#modal-dinamico-container" class="btn btn-ghost btn-sm btn-circle text-base-content/50 hover:text-primary shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
+            <button hx-get="{% url 'edit_course' curso.id %}" hx-target="#modal-dinamico-container" hx-swap="innerHTML"
+                class="btn btn-ghost btn-sm btn-circle text-white/50 hover:text-[#007bff] shrink-0 transition-colors"
+                title="Editar informações do curso">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                </svg>
             </button>
             {% endif %}
         </div>
 
         <div class="max-w-4xl">
-            
+
             <div class="flex items-center gap-3 mb-6 hidden lg:flex">
-                <h1 class="text-3xl font-bold">{{ curso.title }}</h1>
+                <h1 class="font-heading text-3xl font-medium text-white tracking-tight">{{ curso.title }}</h1>
 
                 {% if request.user.is_staff %}
-                <button hx-get="{% url 'edit_course' curso.id %}"
-                        hx-target="#modal-dinamico-container"
-                        class="btn btn-ghost btn-sm btn-circle text-base-content/50 hover:text-primary transition-colors mt-1"
-                        title="Editar informações do curso">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
+                <button hx-get="{% url 'edit_course' curso.id %}" hx-target="#modal-dinamico-container"
+                    hx-swap="innerHTML"
+                    class="btn glass bg-white/10 hover:bg-white/20 border-white/20 text-white gap-2 h-10 px-4 rounded-xl transition-all duration-300"
+                    title="Editar informações do curso">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                    </svg>
                 </button>
                 {% endif %}
             </div>
 
-            <div id="modal-dinamico-container"></div>
 
             <div id="conteudo-principal" class="w-full">
                 {% if lesson_ativa %}
-                    {% include 'partials/_lesson_details.html' with lesson=lesson_ativa is_completed=is_completed %}
+                {% include 'partials/_lesson_details.html' with lesson=lesson_ativa is_completed=is_completed %}
 
                 {% else %}
-        {% if user.is_staff %}
-            <div class="mb-6 flex gap-2">
-                <button
-                    hx-get="{% url 'manage_students' curso.id %}"
-                    hx-target="#conteudo-principal"
-                    hx-swap="innerHTML"
-                    class="btn btn-outline btn-secondary btn-sm">
+                {% if user.is_staff %}
+                <div class="mb-6 flex gap-3">
+                    <button hx-get="{% url 'manage_students' curso.id %}" hx-target="#conteudo-principal"
+                        hx-swap="innerHTML"
+                        class="btn btn-sm glass-panel border border-white/10 text-white hover:bg-white/10 transition-colors uppercase tracking-widest text-[10px] items-center gap-2">
 
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-                    </svg>
-                    Gerenciar Alunos
-                </button>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-4 h-4 text-purple-400">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                        </svg>
+                        Gerenciar Alunos
+                    </button>
 
-                <button
-                    hx-get="{% url 'manage_curriculum' curso.id %}"
-                    hx-target="#conteudo-principal"                    
-                    hx-swap="innerHTML"
-                    class="btn btn-outline btn-primary btn-sm">
+                    <button hx-get="{% url 'manage_curriculum' curso.id %}" hx-target="#conteudo-principal"
+                        hx-swap="innerHTML"
+                        class="btn btn-sm glass-panel border border-[#007bff]/50 text-[#007bff] hover:bg-[#007bff]/10 hover:border-[#007bff] transition-colors uppercase tracking-widest text-[10px] items-center gap-2">
 
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                    </svg>
-                    Organizar Grade
-                </button>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-4 h-4 text-[#007bff]">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                        </svg>
+                        Organizar Grade
+                    </button>
 
-            </div>
-        {% endif %}
-        <div id="area-imagem-curso">
-            {% if curso.image %}
-                <div class="relative w-full max-w-4xl mb-6">
-                    <img src="{{ curso.image.url }}" class="w-full rounded-xl object-cover max-h-96 border border-base-300 shadow-md" />
-                    
-                    {% if user.is_staff %}
-                        <button 
-                            hx-post="{% url 'delete_course_img' curso.id %}" 
+                </div>
+                {% endif %}
+                <div id="area-imagem-curso">
+                    {% if curso.image %}
+                    <div class="relative w-full max-w-4xl mb-6">
+                        <img src="{{ curso.image.url }}"
+                            class="w-full rounded-2xl object-cover max-h-96 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]" />
+
+                        {% if user.is_staff %}
+                        <button hx-post="{% url 'delete_course_img' curso.id %}"
                             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                             hx-confirm="Tem certeza que deseja remover a imagem deste curso?"
-                            class="btn btn-circle btn-error btn-sm absolute top-3 right-3 shadow-lg opacity-80 hover:opacity-100 transition-opacity">
-                            
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            class="absolute top-4 right-4 w-10 h-10 rounded-full bg-red-600/80 hover:bg-red-600 text-white flex items-center justify-center transition-all shadow-lg backdrop-blur text-sm">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                             </svg>
 
                         </button>
-                    {% endif %}
-                </div>
-                
-            {% else %}
-                {% if user.is_staff %}
+                        {% endif %}
+                    </div>
+
+                    {% else %}
+                    {% if user.is_staff %}
                     <div class="mb-6">
                         <label class="label"><span class="label-text font-medium">Adicionar Imagem</span></label>
-                        <input type="file" name="imagem" class="file-input file-input-bordered w-full max-w-md" id="imagem"
-                            hx-post="{% url 'course_img' curso.id %}"
-                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                            hx-encoding="multipart/form-data"
-                            hx-swap="none"/>
+                        <input type="file" name="imagem" class="file-input file-input-bordered w-full max-w-md"
+                            id="imagem" hx-post="{% url 'course_img' curso.id %}"
+                            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-encoding="multipart/form-data"
+                            hx-swap="none" />
                     </div>
-                {% else %}
+                    {% else %}
                     <div class="mb-6 alert alert-warning shadow-sm w-fit">
                         <p>Nenhuma imagem disponível.</p>
                     </div>
+                    {% endif %}
+                    {% endif %}
+                </div>
+
+
+                <p class="text-gray-400 text-lg leading-relaxed">{{ curso.description }}</p>
+
                 {% endif %}
-            {% endif %}
+
+            </div>
         </div>
 
-
-            <p class="text-base-content/80 text-lg">{{ curso.description }}</p>
-        
-        {% endif %}
-
-        </div>
     </div>
-        
-    </div> 
     <div class="drawer-side z-40">
-        <label for="drawer-modulos" aria-label="close sidebar" class="drawer-overlay"></label> 
-        
+        <label for="drawer-modulos" aria-label="close sidebar" class="drawer-overlay"></label>
+
         {% include 'partials/_drawer.html' %}
 
     </div>
-    </div>
+</div>
 
 
 {% endblock %}

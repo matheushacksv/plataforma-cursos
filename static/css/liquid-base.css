@@ -1,0 +1,89 @@
+html {
+    background-color: #050a14;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #050a14;
+    color: white;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* Liquid Blobs Background Component */
+.liquid-bg {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.liquid-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    animation: float-liquid 15s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes float-liquid {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(40px, 60px) scale(1.1);
+    }
+}
+
+/* Glass Panels (Reusable) */
+.glass-panel-base {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+}
+
+/* Footer Premium */
+.liquid-footer {
+    margin-top: auto;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 3rem 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-logo {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+}
+
+.footer-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 1.5rem;
+}

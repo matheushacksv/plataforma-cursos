@@ -1,0 +1,195 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Liquid Glass Card */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 2rem;
+  z-index: 10;
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  transition: 0.5s;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.glass-panel:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 123, 255, 0.15);
+}
+
+.glass-panel:hover::before {
+  left: 100%;
+  transition: 0.7s ease-in-out;
+}
+
+/* Typography */
+.login-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 300;
+}
+
+/* Inputs con Design System */
+.input-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.login-input {
+  width: 100%;
+  padding: 1rem 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1rem;
+  outline: none;
+  transition: border-bottom-color 0.3s;
+}
+
+.login-input:focus {
+  border-bottom-color: var(--primary);
+}
+
+.input-group label {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.login-input:focus~label,
+.login-input:not(:placeholder-shown)~label {
+  top: -12px;
+  font-size: 0.75rem;
+  color: var(--primary);
+}
+
+/* Botões Modernos */
+.btn-gradient {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--primary);
+  border-radius: 0.75rem;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px var(--primary-glow);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-gradient:hover {
+  background-color: white;
+  color: black;
+  transform: scale(1.02);
+}
+
+/* Links em design system style */
+.login-link {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.login-link:hover {
+  color: var(--primary);
+}
+
+/* Divider */
+.login-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 2rem 0;
+}
+
+/* Theme Visibility */
+.theme-img-light {
+  display: none;
+}
+
+[data-theme='light'] .theme-img-dark,
+[data-theme='cupcake'] .theme-img-dark {
+  display: none;
+}
+
+[data-theme='light'] .theme-img-light,
+[data-theme='cupcake'] .theme-img-light {
+  display: block;
+}
+
+/* Reveal Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: reveal-anim 0.8s cubic-bezier(0.5, 0, 0, 1) forwards;
+}
+
+@keyframes reveal-anim {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.delay-1 {
+  animation-delay: 0.1s;
+}
+
+.delay-2 {
+  animation-delay: 0.2s;
+}
+
+.theme-toggle-login {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 60;
+}

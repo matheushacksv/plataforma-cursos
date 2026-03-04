@@ -1,74 +1,146 @@
-        <ul id="manu-drawer-lateral"
-            hx-get="{% url 'render_drawer' curso.id %}"
-            hx-trigger="gradeAtualizada from:body"
-            hx-swap="outerHTML"
-            class="menu p-4 w-80 min-h-full bg-base-200 text-base-content border-r border-base-300">
-            
-            <li class="menu-title text-base-content/50 uppercase tracking-wider text-xs mb-2">Módulos do Curso</li>
+<ul id="manu-drawer-lateral" hx-get="{% url 'render_drawer' curso.id %}" hx-trigger="gradeAtualizada from:body"
+    hx-swap="outerHTML"
+    class="menu p-4 w-80 min-h-full glass-panel-base bg-black/40 text-white/80 border-r border-white/10">
 
-            {% for modulo in curso.modules.all %}
+    <li class="menu-title text-white/50 uppercase tracking-widest text-[10px] mb-2 font-heading">Módulos do Curso</li>
 
-            <li>
-                <details {% if forloop.first %}open{% endif %}>
-                    <summary class="font-medium text-base">
-                        {{ modulo.order }}. {{ modulo.title }}
-                    </summary>
+    {% for modulo in curso.modules.all %}
 
-                    <ul>
-                        {% for aula in modulo.lessons.all %}
-                        <li>
-                            <a class="cursor-pointer flex items-center justify-between group"
-                               hx-get="{% url 'lesson_details' aula.id %}"
-                               hx-target="#conteudo-principal"
-                               hx-swap="innerHTML">
-                               
-                               <span class="truncate pr-2">{{ aula.title }}</span>
-                               
-                               <span id="check-aula-{{ aula.id }}">
-                                   {% if aula.id in aulas_concluidas %}
-                                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 text-success shrink-0" title="Aula Concluída">
-                                       <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
-                                   </svg>
-                                   {% endif %}
-                               </span>
+    <li>
+        <details {% if forloop.first %}open{% endif %} class="group">
+            <summary
+                class="font-heading font-medium text-base text-white hover:text-[#007bff] transition-colors marker:text-[#007bff]">
+                {{ modulo.order }}. {{ modulo.title }}
+            </summary>
 
-                            </a>
-                        </li>
-                        {% empty %}
-                        <li><span class="text-base-content/50 text-sm italic">Nenhuma aula cadastrada.</span></li>
-                        {% endfor %}
-                    </ul>
-                </details>
-            </li>
-            {% empty %}
-                <div class="alert alert-warning text-sm mt-2">
-                    Nenhum módulo cadastrado neste
+            <ul>
+                {% for aula in modulo.lessons.all %}
+                <li>
+                    <a class="cursor-hover flex items-center justify-between group hover:bg-white/10 hover:text-white rounded-lg transition-colors py-2 px-3"
+                        hx-get="{% url 'lesson_details' aula.id %}" hx-target="#conteudo-principal" hx-swap="innerHTML">
+
+                        <span class="truncate pr-2 text-sm">{{ aula.title }}</span>
+
+                        <span id="check-aula-{{ aula.id }}">
+                            {% if aula.id in aulas_concluidas %}
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="w-4 h-4 text-emerald-400 shrink-0 drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]"
+                                title="Aula Concluída">
+                                <path fill-rule="evenodd"
+                                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            {% endif %}
+                        </span>
+
+                    </a>
+                </li>
+                {% empty %}
+                <li><span class="text-white/40 text-xs uppercase tracking-widest italic py-2">Nenhuma aula
+                        cadastrada.</span></li>
+                {% endfor %}
+            </ul>
+        </details>
+    </li>
+    {% empty %}
+    <div
+        class="alert bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 text-sm mt-2 rounded-xl backdrop-blur-sm">
+        Nenhum módulo cadastrado neste curso
+    </div>
+    {% endfor %}
+    {% if user.is_staff %}
+    <div class="divider"></div>
+    <div x-data="{ modalModulo: false}">
+        <li>
+            <button
+                class="btn btn-sm w-full bg-[#007bff]/20 text-[#007bff] border border-[#007bff]/50 hover:bg-[#007bff] hover:text-white transition-all rounded-lg uppercase tracking-widest text-[10px]"
+                @click="modalModulo = true">
+                + Novo Módulo
+            </button>
+        </li>
+
+        <template x-teleport="body">
+            <dialog class="modal backdrop-blur-sm" :class="{ 'modal-open': modalModulo }"
+                @keydown.window.escape="modalModulo = false"
+                @grade-atualizada.camel.window="modalModulo = false; document.getElementById('form-modulo').reset();">
+
+                <div class="modal-box glass-panel-base border border-white/10 text-white shadow-2xl">
+                    <button type="button"
+                        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white/50 hover:text-white"
+                        @click="modalModulo = false">
+                        ✕
+                    </button>
+
+                    <form id="form-modulo" hx-post="{% url 'create_module' curso.id %}" hx-swap="innerHTML"
+                        hx-encodings="multipart/form-data">{% csrf_token %}
+
+                        <fieldset
+                            class="fieldset bg-black/20 border-white/10 rounded-box w-full border p-6 flex flex-col gap-4 mt-4 text-white">
+                            <legend class="fieldset-legend font-heading text-lg font-bold text-white">Detalhes do módulo
+                            </legend>
+
+                            <label class="form-control w-full">
+                                <div class="label">
+                                    <span class="label-text font-medium">Título</span>
+                                </div>
+
+                                <div class="indicator w-full">
+                                    <span class="indicator-item badge badge-secondary badge-sm">Obrigatório</span>
+                                    <input type="text" name="titulo" class="input input-bordered w-full"
+                                        placeholder="Nome do módulo.." required>
+                                </div>
+
+                            </label>
+
+                            <div class="modal-action mt-6">
+                                <button type="button"
+                                    class="btn btn-ghost hover:bg-error/20 hover:text-error transition-colors"
+                                    @click="modalModulo = false">Cancelar</button>
+                                <button type="submit"
+                                    class="btn bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 whitespace-nowrap flex-nowrap px-6 py-2.5 rounded-xl h-fit w-fit transition-colors">Salvar</button>
+                            </div>
+
+                        </fieldset>
+
+                    </form>
+
                 </div>
-            {% endfor %}
-            {% if user.is_staff %}
-                <div class="divider"></div>
-                <div x-data="{ modalModulo: false}">
-                    <li>
-                        <button class="btn btn-outline btn-sm btn-primary border-dashed" @click="modalModulo = true">
-                            + Novo Módulo
+
+                <div class="modal-backdrop bg-black/50"></div>
+
+            </dialog>
+        </template>
+
+        <div class="h-px bg-white/10 my-4"></div>
+        <div x-data="{ modalAula: false }">
+            <li>
+                <button
+                    class="btn btn-sm w-full bg-purple-500/20 text-purple-400 border border-purple-500/50 hover:bg-purple-500 hover:text-white transition-all rounded-lg uppercase tracking-widest text-[10px]"
+                    @click="modalAula = true">
+                    + Nova Aula
+                </button>
+            </li>
+
+            <template x-teleport="body">
+                <dialog class="modal backdrop-blur-sm" :class="{'modal-open': modalAula}"
+                    @keydown.window.escape="modalAula = false"
+                    @grade-atualizada.camel.window="modalAula = false; document.getElementById('form-aula').reset();">
+
+                    <div
+                        class="modal-box w-11/12 max-w-4xl glass-panel-base border border-white/10 text-white shadow-2xl">
+                        <button type="button"
+                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white/50 hover:text-white"
+                            @click="modalAula = false">
+                            ✕
                         </button>
-                    </li>
 
-                <template x-teleport="body">
-                    <dialog class="modal backdrop-blur-sm"
-                            :class="{ 'modal-open': modalModulo }"
-                            @keydown.window.escape="modalModulo = false"
-                            @grade-atualizada.camel.window="modalModulo = false; document.getElementById('form-modulo').reset();">
-                    
-                        <div class="modal-box">
-                            <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="modalModulo = false">
-                                ✕
-                            </button>
-                        
-                        <form id="form-modulo" hx-post="{% url 'create_module' curso.id %}" hx-swap="innerHTML" hx-encodings="multipart/form-data">{% csrf_token %}
+                        <form id="form-aula" hx-post="{% url 'create_lesson' curso.id %}" hx-swap="innerHTML"
+                            hx-encoding="multipart/form-data">{% csrf_token %}
 
-                            <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-6 flex flex-col gap-4 mt-4">
-                                <legend class="fieldset-legend text-lg font-bold">Detalhes do módulo</legend>
+                            <fieldset
+                                class="fieldset bg-black/20 border-white/10 rounded-box w-full border p-6 flex flex-col gap-4 mt-4 text-white">
+                                <legend class="fieldset-legend font-heading text-lg font-bold text-white">Detalhes da
+                                    aula</legend>
 
                                 <label class="form-control w-full">
                                     <div class="label">
@@ -77,170 +149,121 @@
 
                                     <div class="indicator w-full">
                                         <span class="indicator-item badge badge-secondary badge-sm">Obrigatório</span>
-                                        <input type="text" name="titulo" class="input input-bordered w-full" placeholder="Nome do módulo.." required>
+                                        <input type="text" name="titulo" class="input input-bordered w-full"
+                                            placeholder="Nome da aula.." required>
                                     </div>
-
                                 </label>
 
-                            <div class="modal-action mt-6">
-                                <button type="button" class="btn btn-ghost hover:bg-error hover:text-white transition-colors" @click="modalModulo = false">Cancelar</button>
-                                <button type="submit" class="btn btn-primary">Salvar</button>
-                            </div>
-
-                            </fieldset>
-
-                        </form>
-
-                        </div> 
-
-                        <div class="modal-backdrop bg-black/50"></div>
-
-                    </dialog>
-                </template>
-                
-                    <div class="divider"></div>
-                    <div x-data="{ modalAula: false }">
-                        <li>
-                            <button class="btn btn-outline btn-sm btn-accent border-dashed" @click="modalAula = true">
-                                + Nova Aula
-                            </button>
-                        </li>
-                    
-                    <template x-teleport="body">
-                        <dialog class="modal backdrop-blur-sm"
-                                :class="{'modal-open': modalAula}"
-                                @keydown.window.escape="modalAula = false"
-                                @grade-atualizada.camel.window="modalAula = false; document.getElementById('form-aula').reset();">
-                            
-                            <div class="modal-box w-11/12 max-w-4xl">
-                                <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="modalAula = false">
-                                    ✕
-                                </button>
-                            
-                            <form id="form-aula" hx-post="{% url 'create_lesson' curso.id %}" hx-swap="innerHTML" hx-encoding="multipart/form-data">{% csrf_token %}
-
-                                <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-6 flex flex-col gap-4 mt-4">
-                                    <legend class="fieldset-legend text-lg font-bold">Detalhes da aula</legend>
-
-                                    <label class="form-control w-full">
-                                        <div class="label">
-                                            <span class="label-text font-medium">Título</span>
-                                        </div>
-
-                                        <div class="indicator w-full">
-                                            <span class="indicator-item badge badge-secondary badge-sm">Obrigatório</span>
-                                            <input type="text" name="titulo" class="input input-bordered w-full" placeholder="Nome da aula.." required>
-                                        </div>
-                                    </label>
-
-                                    <label class="form-control w-full">
-                                        <div class="label">
-                                            <span class="label-text font-medium">Descrição</span>                                            
-                                        </div>
-
-                                        <div class="indicator w-full">
-                                            <span class="indicator-item badge badge-info badge-sm">Opcional</span>
-                                            <textarea class="textarea w-full" placeholder="Descrição da aula.." name="descricao"></textarea>
-                                        </div>
-                                    </label>
-
-                                    <div class="form-control w-full">
-                                        <div class="label">
-                                            <span class="label-text font-medium">URL do vídeo</span>
-                                        </div>
-
-                                        <div class="indicator w-full">
-                                            <span class="indicator-item badge badge-info badge-sm">Opcional</span>
-                                            
-                                            <label class="input validator w-full">
-                                                <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                                    <g
-                                                    stroke-linejoin="round"
-                                                    stroke-linecap="round"
-                                                    stroke-width="2.5"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    >
-                                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                                                    </g>
-                                                </svg>
-                                                <input
-                                                    type="url"
-                                                    name="video_url"                                                     
-                                                    placeholder="https://"
-                                                    pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9\-].*[a-zA-Z0-9])?\.)+[a-zA-Z].*$"
-                                                    title="Precisa ser uma URL válida"
-                                                    class="w-full"
-                                                />
-                                            </label>
-                                        </div>
+                                <label class="form-control w-full">
+                                    <div class="label">
+                                        <span class="label-text font-medium">Descrição</span>
                                     </div>
 
-                                    <div class="form-control w-full">
-                                        <div class="label">
-                                            <span class="label-text font-medium">Conteúdo em Texto (Artigo)</span>
-                                            <span class="badge badge-info badge-sm">Opcional</span>
-                                        </div>
-                                                                            
-                                        <input type="hidden" id="conteudo-aula" name="content">
+                                    <div class="indicator w-full">
+                                        <span class="indicator-item badge badge-info badge-sm">Opcional</span>
+                                        <textarea class="textarea w-full" placeholder="Descrição da aula.."
+                                            name="descricao"></textarea>
+                                    </div>
+                                </label>
 
-                                        <trix-editor input="conteudo-aula" class="trix-content w-full min-h-[150px] bg-base-100 border-base-300 rounded-box"></trix-editor>
-                                    
+                                <div class="form-control w-full">
+                                    <div class="label">
+                                        <span class="label-text font-medium">URL do vídeo</span>
                                     </div>
 
-                                    <label class="form-control w-full">
-                                        <div class="label">
-                                            <span class="label-text font-medium">Material de Apoio</span>
-                                        </div>
-                                        <div class="indicator w-full">
-                                            <span class="indicator-item badge badge-info badge-sm">Opcional</span>
-                                            <input type="file" name="attachments" multiple class="file-input file-input-bordered w-full" />
-                                        </div>
-                                    </label>
+                                    <div class="indicator w-full">
+                                        <span class="indicator-item badge badge-info badge-sm">Opcional</span>
 
-                                    <label class="form-control w-full">
-                                        <div class="label">
-                                            <span class="label-text font-medium">Módulo</span>
-                                        </div>
+                                        <label class="input validator w-full">
+                                            <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24">
+                                                <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5"
+                                                    fill="none" stroke="currentColor">
+                                                    <path
+                                                        d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71">
+                                                    </path>
+                                                    <path
+                                                        d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71">
+                                                    </path>
+                                                </g>
+                                            </svg>
+                                            <input type="url" name="video_url" placeholder="https://"
+                                                pattern="^(https?://)?([a-zA-Z0-9]([a-zA-Z0-9\-].*[a-zA-Z0-9])?\.)+[a-zA-Z].*$"
+                                                title="Precisa ser uma URL válida" class="w-full" />
+                                        </label>
+                                    </div>
+                                </div>
 
-                                        <div class="indicator w-full">
-                                            <span class="indicator-item badge badge-secondary badge-sm">Obrigatório</span>
+                                <div class="form-control w-full">
+                                    <div class="label">
+                                        <span class="label-text font-medium">Conteúdo em Texto (Artigo)</span>
+                                        <span class="badge badge-info badge-sm">Opcional</span>
+                                    </div>
 
-                                            <select name="modulo_id" class="select select-bordered w-full"required>
-                                                <option value="" disabled selected>Selecione a qual módulo esta aula pertence</option>
+                                    <input type="hidden" id="conteudo-aula" name="content">
 
-                                                {% for modulo in curso.modules.all %}
-                                                    <option value="{{modulo.id}}">
-                                                        {{modulo.title}}
-                                                    </option>
-                                                {% empty %}
-                                                    <option value="" disabled>Nenhum módulo criado neste curso ainda</option>
-                                                {% endfor %}
+                                    <trix-editor input="conteudo-aula"
+                                        class="trix-content w-full min-h-[150px] bg-base-100 border-base-300 rounded-box"></trix-editor>
 
-                                            </select>
+                                </div>
 
-                                        </div>
-                                    </label>
+                                <label class="form-control w-full">
+                                    <div class="label">
+                                        <span class="label-text font-medium">Material de Apoio</span>
+                                    </div>
+                                    <div class="indicator w-full">
+                                        <span class="indicator-item badge badge-info badge-sm">Opcional</span>
+                                        <input type="file" name="attachments" multiple
+                                            class="file-input file-input-bordered w-full" />
+                                    </div>
+                                </label>
 
-                                    
+                                <label class="form-control w-full">
+                                    <div class="label">
+                                        <span class="label-text font-medium">Módulo</span>
+                                    </div>
+
+                                    <div class="indicator w-full">
+                                        <span class="indicator-item badge badge-secondary badge-sm">Obrigatório</span>
+
+                                        <select name="modulo_id" class="select select-bordered w-full" required>
+                                            <option value="" disabled selected>Selecione a qual módulo esta aula
+                                                pertence</option>
+
+                                            {% for modulo in curso.modules.all %}
+                                            <option value="{{modulo.id}}">
+                                                {{modulo.title}}
+                                            </option>
+                                            {% empty %}
+                                            <option value="" disabled>Nenhum módulo criado neste curso ainda</option>
+                                            {% endfor %}
+
+                                        </select>
+
+                                    </div>
+                                </label>
+
+
                                 <div class="modal-action mt-6">
-                                    <button type="button" class="btn btn-ghost hover:bg-error hover:text-white transition-colors" @click="modalAula = false">Cancelar</button>
-                                    <button type="submit" class="btn btn-primary">Salvar</button>
+                                    <button type="button"
+                                        class="btn btn-ghost hover:bg-error/20 hover:text-error transition-colors"
+                                        @click="modalAula = false">Cancelar</button>
+                                    <button type="submit"
+                                        class="btn bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 whitespace-nowrap flex-nowrap px-6 py-2.5 rounded-xl h-fit w-fit transition-colors">Salvar</button>
                                 </div>
 
                                 </label>
 
 
-                            </form>
-
-                            </div>
-
-                        </dialog>
-                    </template>
+                        </form>
 
                     </div>
-                </div>
-            {% endif %}
-            
-        </ul>
+
+                </dialog>
+            </template>
+
+        </div>
+    </div>
+    {% endif %}
+
+</ul>

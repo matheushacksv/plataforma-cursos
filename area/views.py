@@ -2,7 +2,8 @@ from area.models import SuportTicket, TicketResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from area.models import Course, Module, Lesson, Enrollment, LessonProgress, LessonMaterial, LessonComment
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, FileResponse
+import os
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.db.models import Max
@@ -441,7 +442,9 @@ def edit_lesson(request, lesson_id):
         response = HttpResponse(status=204)
         response['HX-Trigger'] = 'gradeAtualizada'
         return response
-    return render(request, 'partials/_edit_lesson_modal.html', {'aula': lesson})
+    response = render(request, 'partials/_edit_lesson_modal.html', {'aula': lesson})
+    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response
 
 @login_required(login_url='/login/')
 def delete_lesson(request, lesson_id):
@@ -466,7 +469,9 @@ def edit_module(request, module_id):
         response = HttpResponse(status=204)
         response['HX-Trigger'] = 'gradeAtualizada'
         return response
-    return render(request, 'partials/_edit_module_modal.html', {'modulo': modulo})
+    response = render(request, 'partials/_edit_module_modal.html', {'modulo': modulo})
+    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response
 
 @login_required(login_url='/login/')
 def delete_module(request, module_id):
@@ -527,7 +532,9 @@ def edit_course(request, course_id):
         response = HttpResponse(status=204)
         response['HX-Refresh'] = 'true'
         return response
-    return render(request, 'partials/_edit_course_modal.html', {'curso': curso})
+    response = render(request, 'partials/_edit_course_modal.html', {'curso': curso})
+    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response
 
 @login_required(login_url='/login/')
 def search_lessons(request):
@@ -717,3 +724,27 @@ def listar_tickets(request):
 def ticket_detail(request, ticket_id):
     ticket = get_object_or_404(SuportTicket, id=ticket_id, usuario=request.user)
     return render(request, 'partials/_ticket_detail.html', {'ticket': ticket})
+
+
+@login_required(login_url='/login/')
+def download_material(request, material_id):
+    material = get_object_or_404(LessonMaterial, id=material_id)
+    
+    curso = material.lesson.module.course
+    if not request.user.is_staff:
+        tem_acesso = Enrollment.objects.filter(
+            student=request.user, 
+            course=curso, 
+            is_active=True
+        ).exists()
+        if not tem_acesso:
+            return HttpResponse('Acesso negado', status=403)
+
+    response = FileResponse(material.file.open(), as_attachment=True)
+    
+    
+    filename = os.path.basename(material.file.name)
+    if '_' in filename and len(filename) > 20: 
+        pass 
+
+    return response

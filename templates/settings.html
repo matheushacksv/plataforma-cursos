@@ -8,79 +8,119 @@
 
 
 
-<div class="container mx-auto max-w-3xl py-10 px-4">
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold">Configurações</h1>
-        <p class="text-base-content/70 mt-1">Gerencie a segurança da sua conta e preferências do sistema.</p>
+<div class="container mx-auto max-w-3xl py-12 px-4 mb-12" x-data="{ openDeleteModal: false }">
+    <div class="mb-10 text-center sm:text-left">
+        <h1 class="font-heading text-3xl font-bold text-white tracking-tight">Configurações</h1>
+        <p class="text-white/60 mt-2 font-medium">Gerencie a segurança da sua conta e preferências do sistema.</p>
     </div>
 
-    <div class="card bg-base-100 shadow-xl border border-base-200 mb-8">
-        <div class="card-body">
-            <h2 class="card-title text-xl border-b border-base-200 pb-2 mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+    <div class="glass-panel-base border border-white/10 rounded-2xl p-0 shadow-2xl overflow-hidden mb-8">
+        <div class="p-8 sm:p-10">
+            <h2
+                class="font-heading font-bold text-xl text-white border-b border-white/10 pb-4 mb-8 flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 text-[#007bff]">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
                 Segurança
             </h2>
-            
-            <form id="form-password" 
-                  hx-post="{% url 'settings' %}" 
-                  hx-target="#password-alert-container" 
-                  class="flex flex-col gap-4">
+
+            <form id="form-password" hx-post="{% url 'settings' %}" hx-target="#password-alert-container"
+                class="flex flex-col gap-6">
                 {% csrf_token %}
 
                 <label class="form-control w-full max-w-md">
-                    <div class="label"><span class="label-text font-medium">Senha Atual</span></div>
-                    <input type="password" name="old_password" class="input input-bordered w-full" placeholder="••••••••" required />
+                    <div class="label mb-1"><span class="label-text font-semibold text-white/80">Senha Atual</span>
+                    </div>
+                    <input type="password" name="old_password"
+                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/20"
+                        placeholder="••••••••" required />
                 </label>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
                     <label class="form-control w-full">
-                        <div class="label"><span class="label-text font-medium">Nova Senha</span></div>
-                        <input type="password" name="new_password" class="input input-bordered w-full" placeholder="••••••••" required minlength="6" />
+                        <div class="label mb-1"><span class="label-text font-semibold text-white/80">Nova Senha</span>
+                        </div>
+                        <input type="password" name="new_password"
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/20"
+                            placeholder="••••••••" required minlength="6" />
                     </label>
 
                     <label class="form-control w-full">
-                        <div class="label"><span class="label-text font-medium">Confirmar Nova Senha</span></div>
-                        <input type="password" name="confirm_password" class="input input-bordered w-full" placeholder="••••••••" required minlength="6" />
+                        <div class="label mb-1"><span class="label-text font-semibold text-white/80">Confirmar Nova
+                                Senha</span></div>
+                        <input type="password" name="confirm_password"
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/20"
+                            placeholder="••••••••" required minlength="6" />
                     </label>
                 </div>
 
                 <div id="password-alert-container"></div>
 
-                <div class="mt-2">
-                    <button type="submit" class="btn btn-primary">Atualizar Senha</button>
+                <div class="flex justify-center sm:justify-start mt-4">
+                    <button type="submit"
+                        class="btn bg-[#007bff] hover:bg-[#007bff]/80 text-white shrink-0 px-8 py-3 rounded-xl h-auto min-h-0 border-0 transition-all hover:scale-[1.02] active:scale-95 uppercase tracking-widest text-[11px] font-bold shadow-lg shadow-blue-900/20">
+                        Atualizar Senha
+                    </button>
                 </div>
             </form>
 
         </div>
     </div>
 
-    <div class="card bg-error/10 border border-error/20 shadow-sm mt-8">
-        <div class="card-body">
-            <h2 class="card-title text-error text-xl mb-2">Zona de Perigo</h2>
-            <p class="text-base-content/80 text-sm">
-                Ao excluir sua conta, você perderá permanentemente o acesso a todos os cursos, certificados e histórico de aulas. Esta ação não pode ser desfeita.
+    <div class="glass-panel-base border border-red-500/20 bg-red-500/5 rounded-2xl p-0 shadow-lg overflow-hidden mt-12">
+        <div class="p-8 sm:p-10">
+            <h2 class="font-heading font-bold text-xl text-red-500 mb-4">Zona de Perigo</h2>
+            <p class="text-white/60 text-sm leading-relaxed max-w-2xl">
+                Ao excluir sua conta, você perderá permanentemente o acesso a todos os cursos, certificados e histórico
+                de aulas. Esta ação não pode ser desfeita e todas as suas informações serão removidas dos nossos
+                servidores.
             </p>
-            <div class="card-actions justify-start mt-4">
-                <button class="btn btn-error btn-outline" onclick="delete_account_modal.showModal()">
+            <div class="flex justify-start mt-8">
+                <button
+                    class="btn btn-ghost border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white transition-all rounded-xl px-6"
+                    @click="openDeleteModal = true">
                     Excluir Minha Conta
                 </button>
             </div>
         </div>
     </div>
 
-</div>
 
-<dialog id="delete_account_modal" class="modal">
-  <div class="modal-box">
-    <h3 class="font-bold text-lg text-error">Tem certeza absoluta?</h3>
-    <p class="py-4">Essa ação é irreversível. Para confirmar a exclusão, digite sua senha atual abaixo.</p>
-    <div class="modal-action">
-      <form method="dialog">
-        <button class="btn btn-ghost">Cancelar</button>
-        <button class="btn btn-error" disabled>Excluir (Em breve)</button>
-      </form>
-    </div>
-  </div>
-</dialog>
+
+    <dialog id="delete_account_modal" class="modal backdrop-blur-sm" :class="{'modal-open': openDeleteModal}"
+        x-show="openDeleteModal" @keydown.window.escape="openDeleteModal = false" style="display: none;">
+        <div class="modal-box glass-panel-base border border-white/10 text-white shadow-2xl p-8">
+            <h3 class="font-heading font-bold text-xl text-red-500 mb-4">Tem certeza absoluta?</h3>
+            <p class="text-white/70 text-sm leading-relaxed mb-8">Essa ação é irreversível. Para confirmar a exclusão e
+                segurança da sua conta, digite sua senha atual abaixo.</p>
+
+            <div class="flex flex-col gap-6">
+                <label class="form-control w-full">
+                    <div class="label mb-1"><span class="label-text font-semibold text-white/80">Senha para
+                            Confirmação</span></div>
+                    <input type="password"
+                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-red-500 focus:bg-white/10 transition-all placeholder-white/20 shadow-inner"
+                        placeholder="Sua senha atual" />
+                </label>
+
+                <div class="modal-action mt-4 gap-3">
+                    <div class="flex gap-3">
+                        <button type="button"
+                            class="btn btn-ghost hover:bg-white/10 text-white/70 hover:text-white transition-colors rounded-xl px-6"
+                            @click="openDeleteModal = false">Cancelar</button>
+                        <button type="button"
+                            class="btn bg-red-600 hover:bg-red-700 text-white border-0 transition-all rounded-xl px-6 opacity-50 cursor-not-allowed"
+                            disabled title="Função em breve">Excluir permanentemente</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop bg-black/50" @click="openDeleteModal = false">
+            <button type="button">fechar</button>
+        </div>
+    </dialog>
+</div>
 
 {% endblock %}

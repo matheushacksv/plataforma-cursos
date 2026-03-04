@@ -20,6 +20,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+SITE_URL = os.getenv('SITE_URL', 'http://localhost:8000')
+
 
 # Application definition
 

@@ -1,32 +1,34 @@
-<div x-data="{ modalEditModulo: true }" @grade-atualizada.camel.window="modalEditModulo = false">
-    <dialog class="modal backdrop-blur-sm"
-            :class="{'modal-open': modalEditModulo}"
-            @keydown.window.escape="modalEditModulo = false">
-        
-        <div class="modal-box">
-            <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="modalEditModulo = false">
-                ✕
-            </button>
-        
-            <form id="form-edit-modulo" hx-post="{% url 'edit_module' modulo.id %}">
-                {% csrf_token %}
+<dialog x-data="{ open: true }" class="modal backdrop-blur-sm" :class="{ 'modal-open': open }"
+    @keydown.window.escape="open = false" @grade-atualizada.camel.window="open = false">
 
-                <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-6 flex flex-col gap-4 mt-4">
-                    <legend class="fieldset-legend text-lg font-bold">Editar Módulo</legend>
+    <div class="modal-box glass-panel-base border border-white/10 text-white shadow-2xl relative z-50 animate-fade-in">
 
-                    <label class="form-control w-full">
-                        <div class="label"><span class="label-text font-medium">Título do Módulo</span></div>
-                        
-                        <input type="text" name="titulo" class="input input-bordered w-full" value="{{ modulo.title }}" required>
-                    </label>
+        <button type="button"
+            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white/50 hover:text-white"
+            @click="open = false">
+            ✕
+        </button>
 
-                    <div class="modal-action mt-6">
-                        <button type="button" class="btn btn-ghost" @click="modalEditModulo = false">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-                    </div>
+        <form hx-post="{% url 'edit_module' modulo.id %}">
+            {% csrf_token %}
+            <h3 class="font-heading font-bold text-xl text-white mb-6">Editar Módulo</h3>
 
-                </fieldset>
-            </form>
-        </div> 
-    </dialog>
-</div>
+            <label class="form-control w-full">
+                <div class="label"><span class="label-text font-medium text-white/80">Título do Módulo</span>
+                </div>
+                <input type="text" name="titulo"
+                    class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/40"
+                    value="{{ modulo.title }}" required>
+            </label>
+
+            <div class="modal-action mt-8">
+                <button type="button" class="btn btn-ghost hover:bg-white/10 text-white/70 hover:text-white"
+                    @click="open = false">Cancelar</button>
+                <button type="submit"
+                    class="btn bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-2.5 rounded-xl h-auto min-h-0 border-0 transition-colors uppercase tracking-widest text-[10px] font-semibold">Salvar
+                    Alterações</button>
+            </div>
+        </form>
+    </div>
+    <div class="modal-backdrop bg-black/50" @click="open = false"></div>
+</dialog>

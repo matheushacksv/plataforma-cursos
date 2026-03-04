@@ -1,112 +1,139 @@
-<dialog class="modal backdrop-blur-sm" :class="{ 'modal-open': modalSuporte }"
-    @keydown.window.escape="modalSuporte = false">
+<template x-teleport="body">
+    <dialog class="modal backdrop-blur-sm" :class="{ 'modal-open': modalSuporte }"
+        @keydown.window.escape="modalSuporte = false">
 
-    <div class="modal-box max-w-2xl" x-data="{ tab: 'novo', categoriaSelecionada: '' }">
-        <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            @click="modalSuporte = false">
-            ✕
-        </button>
+        <div class="modal-box max-w-2xl glass-panel-base border border-white/10 text-white shadow-2xl relative z-50"
+            x-data="{ tab: 'novo', categoriaSelecionada: '' }">
+            <button type="button"
+                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-white/50 hover:text-white"
+                @click="modalSuporte = false">
+                ✕
+            </button>
 
-        <h3 class="font-bold text-lg mb-4">Suporte</h3>
+            <h3 class="font-heading font-bold text-lg text-white mb-4">Suporte</h3>
 
-        <!-- Tabs -->
-        <div role="tablist" class="tabs tabs-bordered mb-4">
-            <a role="tab" class="tab" :class="{ 'tab-active': tab === 'novo' }" @click="tab = 'novo'">
-                Abrir Chamado
-            </a>
-            <a role="tab" class="tab" :class="{ 'tab-active': tab === 'acompanhar' }" @click="tab = 'acompanhar'"
-                hx-get="{% url 'listar_tickets' %}" hx-target="#tickets-list" hx-trigger="click" hx-swap="innerHTML">
-                Meus Chamados
-            </a>
-        </div>
+            <!-- Tabs -->
+            <div role="tablist" class="flex gap-2 mb-6 border-b border-white/10 pb-2">
+                <a role="tab"
+                    class="cursor-pointer px-4 py-2 text-sm font-semibold uppercase tracking-wide rounded-lg transition-all duration-300"
+                    :class="tab === 'novo' ? 'bg-[#007bff]/80 backdrop-blur-md text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:text-white hover:bg-white/5'"
+                    @click="tab = 'novo'">
+                    Abrir Chamado
+                </a>
+                <a role="tab"
+                    class="cursor-pointer px-4 py-2 text-sm font-semibold uppercase tracking-wide rounded-lg transition-all duration-300"
+                    :class="tab === 'acompanhar' ? 'bg-[#007bff]/80 backdrop-blur-md text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:text-white hover:bg-white/5'"
+                    @click="tab = 'acompanhar'" hx-get="{% url 'listar_tickets' %}" hx-target="#tickets-list"
+                    hx-trigger="click" hx-swap="innerHTML">
+                    Meus Chamados
+                </a>
+            </div>
 
-        <!-- Tab: Abrir Chamado -->
-        <div x-show="tab === 'novo'" x-transition>
-            <form id="form-suporte" hx-post="{% url 'suport_ticket' %}" hx-encoding="multipart/form-data"
-                hx-target="#mensagem-suporte" hx-swap="innerHTML">
-                {% csrf_token %}
+            <!-- Tab: Abrir Chamado -->
+            <div x-show="tab === 'novo'" x-transition>
+                <form id="form-suporte" hx-post="{% url 'suport_ticket' %}" hx-encoding="multipart/form-data"
+                    hx-target="#mensagem-suporte" hx-swap="innerHTML">
+                    {% csrf_token %}
 
-                <fieldset
-                    class="fieldset bg-base-200 border-base-300 rounded-box w-full border p-6 flex flex-col gap-4">
+                    <fieldset
+                        class="fieldset bg-black/20 border-white/10 rounded-box w-full border p-6 flex flex-col gap-4 text-white">
 
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text font-medium">Assunto</span>
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text font-medium text-white/80">Assunto</span>
+                            </div>
+                            <div class="indicator w-full">
+                                <span
+                                    class="indicator-item badge badge-primary badge-sm absolute right-2 top-2">Obrigatório</span>
+                                <input type="text" name="assunto"
+                                    class="w-full pl-4 pr-24 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/40"
+                                    placeholder="Resumo da situação" required>
+                            </div>
+                        </label>
+
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text font-medium text-white/80">Categoria</span>
+                            </div>
+                            <div class="indicator w-full">
+                                <span
+                                    class="indicator-item badge badge-primary badge-sm z-10 absolute right-8 top-2">Obrigatório</span>
+                                <select name="categoria"
+                                    class="w-full pl-4 pr-28 py-2 bg-[#1a1f2b] border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-[#252a38] transition-all appearance-none"
+                                    x-model="categoriaSelecionada" required>
+                                    <option value="" disabled selected>Selecione uma categoria</option>
+                                    <option value="duvidas">Dúvidas de Uso e Configuração</option>
+                                    <option value="bugs">Problemas Técnicos e Bugs</option>
+                                    <option value="financeiro">Financeiro e Faturamento</option>
+                                    <option value="conta">Gestão de Conta e Acessos</option>
+                                    <option value="sugestoes">Sugestões de Melhoria</option>
+                                </select>
+                                <div
+                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white">
+                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20">
+                                        <path
+                                            d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text font-medium text-white/80">Detalhes</span>
+                            </div>
+                            <div class="indicator w-full">
+                                <span
+                                    class="indicator-item badge badge-primary badge-sm absolute right-2 top-2">Obrigatório</span>
+                                <textarea name="detalhes"
+                                    class="w-full pl-4 pr-24 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/40 h-28"
+                                    placeholder="Descreva o problema ou solicitação com o máximo de detalhes possível..."
+                                    required></textarea>
+                            </div>
+                        </label>
+
+                        <label class="form-control w-full">
+                            <div class="label">
+                                <span class="label-text font-medium text-white/80">Print do problema</span>
+                                <span class="label-text-alt opacity-60 text-white/60">Opcional</span>
+                            </div>
+                            <input type="file" name="anexo"
+                                class="file-input border border-white/10 text-white w-full bg-white/5"
+                                accept="image/*" />
+                        </label>
+
+                        <div class="modal-action mt-4">
+                            <button type="button"
+                                class="btn btn-ghost hover:bg-error/20 hover:text-error transition-colors"
+                                @click="modalSuporte = false">Cancelar</button>
+                            <button type="submit"
+                                class="btn bg-[#007bff] hover:bg-white hover:text-[#007bff] text-white shrink-0 whitespace-nowrap flex-nowrap px-6 py-2.5 rounded-xl h-fit w-fit transition-all duration-300 shadow-lg shadow-blue-900/40 border-0 uppercase tracking-widest text-xs font-semibold">Enviar</button>
                         </div>
-                        <div class="indicator w-full">
-                            <span class="indicator-item badge badge-secondary badge-sm">Obrigatório</span>
-                            <input type="text" name="assunto" class="input input-bordered w-full"
-                                placeholder="Resumo da situação" required>
-                        </div>
-                    </label>
 
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text font-medium">Categoria</span>
-                        </div>
-                        <div class="indicator w-full">
-                            <span class="indicator-item badge badge-secondary badge-sm z-10">Obrigatório</span>
-                            <select name="categoria" class="select select-bordered w-full"
-                                x-model="categoriaSelecionada" required>
-                                <option value="" disabled selected>Selecione uma categoria</option>
-                                <option value="duvidas">Dúvidas de Uso e Configuração</option>
-                                <option value="bugs">Problemas Técnicos e Bugs</option>
-                                <option value="financeiro">Financeiro e Faturamento</option>
-                                <option value="conta">Gestão de Conta e Acessos</option>
-                                <option value="sugestoes">Sugestões de Melhoria</option>
-                            </select>
-                        </div>
-                    </label>
+                        <div id="mensagem-suporte"></div>
 
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text font-medium">Detalhes</span>
-                        </div>
-                        <div class="indicator w-full">
-                            <span class="indicator-item badge badge-secondary badge-sm">Obrigatório</span>
-                            <textarea name="detalhes" class="textarea textarea-bordered h-28 w-full"
-                                placeholder="Descreva o problema ou solicitação com o máximo de detalhes possível..."
-                                required></textarea>
-                        </div>
-                    </label>
+                    </fieldset>
+                </form>
+            </div>
 
-                    <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text font-medium">Print do problema</span>
-                            <span class="label-text-alt opacity-60">Opcional</span>
-                        </div>
-                        <input type="file" name="anexo" class="file-input file-input-bordered w-full"
-                            accept="image/*" />
-                    </label>
-
-                    <div class="modal-action mt-4">
-                        <button type="button" class="btn btn-ghost hover:bg-error hover:text-white transition-colors"
-                            @click="modalSuporte = false">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Enviar</button>
+            <!-- Tab: Acompanhar Chamados -->
+            <div x-show="tab === 'acompanhar'" x-transition>
+                <div id="tickets-list">
+                    <div class="flex flex-col items-center justify-center py-10 text-white/50">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-3 opacity-40 text-[#007bff]"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                        <p class="text-sm font-medium tracking-wide">Clique para carregar seus chamados</p>
                     </div>
-
-                    <div id="mensagem-suporte"></div>
-
-                </fieldset>
-            </form>
-        </div>
-
-        <!-- Tab: Acompanhar Chamados -->
-        <div x-show="tab === 'acompanhar'" x-transition>
-            <div id="tickets-list">
-                <div class="flex flex-col items-center justify-center py-10 text-base-content/50">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mb-3 opacity-40" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    <p class="text-sm">Clique para carregar seus chamados</p>
                 </div>
             </div>
+
         </div>
 
-    </div>
+        <div class="modal-backdrop bg-black/50" @click="modalSuporte = false"></div>
 
-    <div class="modal-backdrop bg-black/50" @click="modalSuporte = false"></div>
-
-</dialog>
+    </dialog>
+</template>

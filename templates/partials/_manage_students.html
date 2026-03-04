@@ -1,152 +1,169 @@
 <div class="w-full animate-fade-in">
 
-    <div class="flex items-center justify-between mb-6">
-        <h3 class="text-2xl font-bold">Alunos: {{ curso.title }}</h3>
+    <div class="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
+        <h3 class="font-heading text-2xl font-bold text-white tracking-tight">Alunos: <span
+                class="text-white/60 font-medium">{{ curso.title }}</span></h3>
 
-        <a href="{% url 'course_details' curso.id %}" class="btn btn-ghost btn-sm">
-            ← Voltar ao Curso
-        </a>
-        <button class="btn btn-ghost" onclick="importCsvModal.showModal()">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-            </svg>
-            Importar em Massa
-        </button>
+        <div class="flex gap-3">
+            <a href="{% url 'course_details' curso.id %}"
+                class="btn btn-ghost btn-sm text-white/50 hover:text-white transition-colors">
+                ← Voltar ao Curso
+            </a>
+            <button
+                class="btn btn-sm glass-panel border border-[#007bff]/50 text-[#007bff] hover:bg-[#007bff]/10 hover:border-[#007bff] transition-colors rounded-lg flex gap-2 items-center"
+                onclick="importCsvModal.showModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                Importar CSV
+            </button>
+        </div>
 
-        <dialog id="importCsvModal" class="modal">
-            <div class="modal-box">
-                <h3 class="font-bold text-lg mb-4">Importar Alunos via CSV</h3>
-                <p class="py-2 text-sm">O arquivo CSV deve conter um cabeçalho na primeira linha com os seguintes nomes
-                    precisos <span class="text-warning font-semibold">(nomes em minusculo):</span></p>
-                <div class="bg-base-200 p-3 rounded-md mb-4 font-mono text-xs overflow-x-auto text-base-content">
+        <dialog id="importCsvModal" class="modal backdrop-blur-sm">
+            <div class="modal-box glass-panel-base border border-white/10 shadow-2xl text-white">
+                <h3 class="font-heading font-bold text-lg text-white mb-4">Importar Alunos via CSV</h3>
+                <p class="py-2 text-sm text-white/70">O arquivo CSV deve conter um cabeçalho na primeira linha com os
+                    seguintes nomes precisos <span class="text-amber-500 font-semibold">(nomes em minusculo):</span></p>
+                <div
+                    class="bg-black/30 border border-white/5 p-3 rounded-lg mb-4 font-mono text-xs overflow-x-auto text-[#007bff]">
                     email,nome,telefone,expiracao
                 </div>
-                <ul class="list-disc list-inside text-sm mb-6 space-y-2">
-                    <li><span class="badge badge-sm badge-neutral">email</span> <span
-                            class="text-xs font-semibold text-error">Obrigatório</span>.</li>
-                    <li><span class="badge badge-sm badge-ghost">nome</span> <span class="text-xs">Opcional</span>.</li>
-                    <li><span class="badge badge-sm badge-ghost">telefone</span> <span class="text-xs">Opcional</span>.
-                    </li>
-                    <li><span class="badge badge-sm badge-ghost">expiracao</span> ou <span
-                            class="badge badge-sm badge-ghost">expiração</span> <span class="text-xs">Opcional (Formato:
+                <ul class="list-disc list-inside text-sm mb-6 space-y-2 text-white/80">
+                    <li></span> email <span class="text-xs font-semibold text-error ml-2">Obrigatório</span>.</li>
+                    <li></span> nome <span class="text-xs ml-2 text-white/50">Opcional</span>.</li>
+                    <li></span> telefone <span class="text-xs ml-2 text-white/50">Opcional</span>.</li>
+                    <li></span> expiracao <span class="text-xs ml-2 text-white/50">Opcional (Formato:
                             AAAA-MM-DD)</span>.</li>
                 </ul>
                 <form hx-post="{% url 'import_students' curso.id %}" hx-encoding="multipart/form-data">
                     {% csrf_token %}
-                    <input type="file" name="file" accept=".csv" class="file-input file-input-bordered w-full mb-4"
-                        required />
+                    <input type="file" name="file" accept=".csv"
+                        class="file-input border border-white/10 w-full mb-6 bg-white/5 text-sm" required />
                     <div class="modal-action">
-                        <button type="button" class="btn" onclick="importCsvModal.close()">Cancelar</button>
-                        <button type="submit" class="btn btn-primary" onclick="importCsvModal.close()">Enviar e
-                            Importar</button>
+                        <button type="button"
+                            class="btn btn-ghost hover:bg-error/20 hover:text-error transition-colors text-white/70"
+                            onclick="importCsvModal.close()">Cancelar</button>
+                        <button type="submit"
+                            class="btn bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 whitespace-nowrap flex-nowrap px-6 py-2.5 rounded-xl h-fit w-fit transition-colors"
+                            onclick="importCsvModal.close()">Enviar e Importar</button>
                     </div>
                 </form>
             </div>
-            <form method="dialog" class="modal-backdrop">
+            <form method="dialog" class="modal-backdrop bg-black/50">
                 <button>fechar</button>
             </form>
         </dialog>
     </div>
 
-    <div class="card bg-base-200 border border-base-300 shadow-sm mb-8">
-        <div class="card-body p-4">
-            <h3 class="font-bold mb-2">Matricular Novo Aluno</h3>
+    <div class="glass-panel-base border border-white/10 rounded-2xl p-6 shadow-2xl mb-8">
+        <div class="">
+            <h3 class="font-heading font-medium text-lg text-white mb-6">Matricular Novo Aluno</h3>
 
             <form hx-post="{% url 'add_student' curso.id %}" hx-target="#conteudo-principal"
                 class="flex flex-col md:flex-row gap-4 items-end">{% csrf_token %}
 
                 <div class="form-control w-full md:w-1/2">
-                    <label class="label"><span class="label-text font-medium">E-mail do aluno</span></label>
+                    <label class="label"><span class="label-text font-medium text-white/80">E-mail do
+                            aluno</span></label>
                     <input type="email" name="email" placeholder="Digite o e-mail do aluno.."
-                        class="input input-bordered w-full" required>
+                        class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/40"
+                        required>
                 </div>
 
                 <div class="form-control w-full md:w-1/3">
                     <label class="label">
-                        <span class="label-text font-medium">Acesso até (Opcional)</span>
+                        <span class="label-text font-medium text-white/80">Acesso até (Opcional)</span>
                     </label>
-                    <input type="date" name="end_date" class="input input-bordered w-full">
+                    <input type="date" name="end_date"
+                        class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all appearance-none cursor-pointer">
                 </div>
 
-                <button type="submit" class="btn btn-primary">Matricular</button>
+                <button type="submit"
+                    class="btn bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 px-8 py-2.5 rounded-xl h-auto min-h-0 border-0 transition-colors uppercase tracking-widest text-[10px] font-semibold h-[42px] leading-tight flex items-center justify-center">Matricular</button>
 
             </form>
 
         </div>
     </div>
 
-    <h3 class="text-xl font-semibold mb-4">Matriculados ({{matriculas.count}})</h3>
+    <h3 class="font-heading text-xl font-medium text-white mb-4">Matriculados ({{matriculas.count}})</h3>
 
-    <div class="overflow-x-auto bg-base-100 border border-base-300 rounded-box shadow-sm">
-        <table class="table table-zebra w-full">
-            <thead class="bg-base-200 text-base-content">
+    <div class="rounded-2xl border border-white/10 bg-black/20 backdrop-blur-md overflow-x-auto shadow-xl">
+        <table class="table w-full relative">
+            <thead class="bg-[#050a14]/60 text-white/50 uppercase tracking-wider text-[10px] border-b border-white/10">
                 <tr>
-                    <th>Aluno</th>
-                    <th>Nome</th>
-                    <th>Telefone</th>
-                    <th>Status</th>
-                    <th>Expiração</th>
-                    <th class="text-center">Ações</th>
-                    <th>Acesso</th>
+                    <th class="py-4">Aluno</th>
+                    <th class="py-4">Nome</th>
+                    <th class="py-4">Telefone</th>
+                    <th class="py-4">Status</th>
+                    <th class="py-4">Expiração</th>
+                    <th class="text-center py-4">Ações</th>
+                    <th class="py-4 text-center">Acesso</th>
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody class="divide-y divide-white/5">
                 {% for matricula in matriculas %}
-                <tr>
-                    <td>
-                        <div class="flex items-center gap-3">
-                            <div class="avatar placeholder">
+                <tr class="hover:bg-white/[0.02] transition-colors group">
+                    <td class="py-4">
+                        <div class="flex items-center gap-4">
+                            <div class="avatar shadow-lg">
                                 <div
-                                    class="bg-neutral text-neutral-content rounded-full w-10 h-10 flex items-center justify-center overflow-hidden">
+                                    class="bg-black text-white/80 rounded-full w-10 h-10 flex items-center justify-center overflow-hidden border border-white/10">
                                     {% if matricula.student.image %}
                                     <img src="{{matricula.student.image.url}}" class="w-full h-full object-cover"
                                         alt="aluno-avatar">
                                     {% else %}
-                                    <span class="text-lg font-medium uppercase">
-                                       {{ matricula.student.email|make_list|first }}</span>
+                                    <span class="text-lg font-medium uppercase font-heading">
+                                        {{ matricula.student.email|make_list|first }}</span>
                                     {% endif %}
                                 </div>
                             </div>
                             <div>
-                                <div class="font-bold">{{ matricula.student.email }}</div>
+                                <div class="font-medium text-white text-sm tracking-wide">{{ matricula.student.email }}
+                                </div>
                             </div>
+
                         </div>
                     </td>
-                    <td>
-                        <span class="text-sm">{{ matricula.student.nome|default:"Não preenchido" }}</span>
+                    <td class="py-4">
+                        <span class="text-sm text-white/50 group-hover:text-white/80 transition-colors">
+                            {{ matricula.student.nome|default:"Não preenchido" }}</span>
                     </td>
 
-                    <td>
-                        <span class="text-sm">{{ matricula.student.phone|default:"Não preenchido" }}</span>
+                    <td class="py-4">
+                        <span class="text-sm text-white/50 group-hover:text-white/80 transition-colors">
+                            {{ matricula.student.phone|default:"Não preenchido" }}</span>
                     </td>
 
-                    <td>
+                    <td class="py-4">
                         {% if not matricula.is_active or matricula.has_expired %}
-                        <span class="badge badge-error badge-sm badge-outline">Inativo</span>
+                        <span
+                            class="badge badge-sm border-none bg-red-500/10 text-red-400 font-semibold tracking-wide uppercase text-[9px] px-2 py-3">Inativo</span>
                         {% else %}
-                        <span class="badge badge-success badge-sm badge-outline">Ativo</span>
+                        <span
+                            class="badge badge-sm border-none bg-emerald-500/10 text-emerald-400 font-semibold tracking-wide uppercase text-[9px] px-2 py-3">Ativo</span>
                         {% endif %}
                     </td>
 
-                    <td>
+                    <td class="py-4">
                         <input type="date" name="end_date" value="{{matricula.end_date|date:'Y-m-d'}}"
-                            class="input input-bordered input-sm w-36"
-                            hx-post="{% url 'update_end_date' matricula.id %}" hx-trigger="blur"
+                            class="px-2 py-1.5 bg-white/5 border border-transparent hover:border-white/10 focus:border-[#007bff] rounded-lg text-sm text-white/70 focus:text-white transition-all appearance-none cursor-pointer w-36 outline-none"
+                            hx-post="{% url 'update_end_date' matricula.id %}" hx-trigger="blur, change"
                             hx-headers='{"X-CSRFToken": "{{csrf_token}}"}' hx-swap="none">
                     </td>
 
-                    <td>
-                        <div class="flex justify-center w-full">
+                    <td class="py-4">
+                        <div class="flex justify-center w-full gap-2">
                             {% if matricula.is_active and not matricula.has_expired %}
-                            <div class="tooltip tooltip-top" data-tip="Remover">
+                            <div class="tooltip tooltip-left" data-tip="Remover Acesso">
                                 <button hx-post="{% url 'change_student_status' matricula.id %}"
                                     hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'
                                     hx-confirm="Tem certeza que deseja remover o acesso de {{matricula.student.email}}?"
                                     hx-target="#conteudo-principal"
-                                    class="btn btn-error btn-sm btn-circle flex items-center justify-center">
+                                    class="w-8 h-8 rounded-lg flex items-center justify-center bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-colors border border-red-500/20">
 
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
@@ -156,12 +173,12 @@
                                 </button>
                             </div>
                             {% else %}
-                            <div class="tooltip tooltip-top" data-tip="Reativar">
+                            <div class="tooltip tooltip-left" data-tip="Reativar Acesso">
                                 <button hx-post="{% url 'change_student_status' matricula.id %}"
                                     hx-headers='{"X-CSRFToken": "{{csrf_token}}"}'
                                     hx-confirm="Tem certeza que deseja reativar o acesso de {{matricula.student.email}}?"
                                     hx-target="#conteudo-principal"
-                                    class="btn btn-success btn-sm btn-circle flex items-center justify-center text-white">
+                                    class="w-8 h-8 rounded-lg flex items-center justify-center bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-colors border border-emerald-500/20">
 
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="2" stroke="currentColor" class="h-4 w-4">
@@ -175,17 +192,18 @@
 
                         </div>
                     </td>
-                    <td>
+                    <td class="py-4">
                         <div class="flex justify-center w-full">
                             {% if matricula.is_active and not matricula.has_expired %}
-                            <div class="tooltip tooltip-top" data-tip="Reenviar">
+                            <div class="tooltip tooltip-left" data-tip="Reenviar Email">
                                 <form hx-post="{% url 'reenviar_acesso' curso.id %}"
-                                    hx-target="#container-de-notificacoes" hx-swap="beforeend" class="inline-block">{% csrf_token %}
-                                    
+                                    hx-target="#container-de-notificacoes" hx-swap="beforeend" class="inline-block">
+                                    {% csrf_token %}
+
                                     <input type="hidden" name="student_id" value="{{ matricula.student.id }}">
 
-                                    <button type="submit" class="btn btn-sm btn-ghost text-info"
-                                        title="Reenviar Acesso">
+                                    <button type="submit"
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center bg-[#007bff]/10 text-[#007bff] hover:bg-[#007bff] hover:text-white transition-colors border border-[#007bff]/20">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -199,7 +217,7 @@
                     </td>
                 </tr> {% empty %}
                 <tr>
-                    <td colspan="5" class="text-center py-8 text-base-content/50 italic">
+                    <td colspan="7" class="text-center py-12 text-white/40 italic text-sm">
                         Nenhum aluno matriculado neste curso ainda.
                     </td>
                 </tr>

@@ -6,78 +6,94 @@
 {% include "partials/_navbar.html" %}
 
 
-<div class="container mx-auto max-w-3xl py-10 px-4">
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold">Meu Perfil</h1>
-        <p class="text-base-content/70 mt-1">Gerencie suas informações pessoais e como você aparece na plataforma.</p>
+<div class="container mx-auto max-w-3xl py-12 px-4 mb-12">
+    <div class="mb-10 text-center sm:text-left">
+        <h1 class="font-heading text-3xl font-bold text-white tracking-tight">Meu Perfil</h1>
+        <p class="text-white/60 mt-2 font-medium">Gerencie suas informações pessoais e como você aparece na plataforma.
+        </p>
     </div>
 
-    <div class="card bg-base-100 shadow-xl border border-base-200">
-        <div class="card-body">
-            
-            <form hx-post="{% url 'profile' %}" 
-                  hx-target="#profile-alert-container" 
-                  hx-encoding="multipart/form-data" 
-                  class="flex flex-col gap-6">
+    <div class="glass-panel-base border border-white/10 rounded-2xl p-0 shadow-2xl overflow-hidden">
+        <div class="p-8 sm:p-10">
+
+            <form hx-post="{% url 'profile' %}" hx-target="#profile-alert-container" hx-encoding="multipart/form-data"
+                class="flex flex-col gap-8">
                 {% csrf_token %}
 
-                <div class="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-base-200">
+                <div class="flex flex-col sm:flex-row items-center gap-8 pb-8 border-b border-white/10">
 
-                    <div class="indicator mt-2">
-                        
+                    <div class="indicator">
+
                         {% if user.is_staff or user.is_superuser %}
-                            <span class="indicator-item badge badge-primary font-bold shadow-sm z-10">Admin</span>
+                        <span
+                            class="indicator-item badge border-none bg-blue-600/80 text-white font-bold shadow-lg shadow-blue-900/40 z-10 px-3 py-3 text-[10px] uppercase tracking-wider">Admin</span>
                         {% else %}
-                            <span class="indicator-item badge badge-neutral shadow-sm z-10">Aluno</span>
+                        <span
+                            class="indicator-item badge border-none bg-emerald-600/80 text-white font-bold shadow-lg shadow-emerald-900/40 z-10 px-3 py-3 text-[10px] uppercase tracking-wider">Aluno</span>
                         {% endif %}
 
-                        <div class="avatar">
-                            <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                        <div class="avatar shadow-2xl">
+                            <div
+                                class="w-32 rounded-full ring-2 ring-white/10 ring-offset-4 ring-offset-[#0A0F1C] bg-black/40">
                                 {% if user.avatar %}
-                                    <img src="{{ user.avatar.url }}" alt="Avatar do usuário" />
+                                <img src="{{ user.avatar.url }}" alt="Avatar do usuário" class="object-cover" />
                                 {% else %}
-                                    <img src="https://ui-avatars.com/api/?name={{ user.nome|default:user.email }}&background=random" alt="Avatar Padrão" />
+                                <img src="https://ui-avatars.com/api/?name={{ user.nome|default:user.email }}&background=007bff&color=fff&size=200"
+                                    alt="Avatar Padrão" />
                                 {% endif %}
                             </div>
                         </div>
 
-                    </div> <div class="form-control w-full max-w-xs">
-                        <label class="label">
-                            <span class="label-text font-medium">Alterar Foto de Perfil</span>
+                    </div>
+
+                    <div class="form-control w-full max-w-xs text-center sm:text-left">
+                        <label class="label mb-1">
+                            <span class="label-text font-semibold text-white/80">Foto de Perfil</span>
                         </label>
-                        <input type="file" name="avatar" class="file-input file-input-bordered file-input-sm w-full" accept="image/*" />
-                        <label class="label">
-                            <span class="label-text-alt text-base-content/60">JPG, PNG ou WEBP. Máx 2MB.</span>
+                        <input type="file" name="avatar"
+                            class="file-input border border-white/10 w-full bg-white/5 text-sm h-10" accept="image/*" />
+                        <label class="label mt-1">
+                            <span class="label-text-alt text-white/40">JPG, PNG ou WEBP. Máx 2MB.</span>
                         </label>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
                     <label class="form-control w-full">
-                        <div class="label"><span class="label-text font-medium">Nome Completo</span></div>
-                        <input type="text" name="nome" value="{{ user.nome|default:'' }}" class="input input-bordered w-full" placeholder="Seu nome..." required />
+                        <div class="label mb-1"><span class="label-text font-semibold text-white/80">Nome
+                                Completo</span></div>
+                        <input type="text" name="nome" value="{{ user.nome|default:'' }}"
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/20"
+                            placeholder="Seu nome completo..." required />
                     </label>
 
                     <label class="form-control w-full">
-                        <div class="label">
-                            <span class="label-text font-medium">E-mail</span>
-                            <span class="badge badge-ghost badge-sm">Privado</span>
+                        <div class="label mb-1">
+                            <span class="label-text font-semibold text-white/80">E-mail</span>
+                            <span
+                                class="badge border-none bg-white/5 text-white/30 text-[9px] uppercase tracking-widest px-2 font-bold">Inalterável</span>
                         </div>
-                        <input type="email" value="{{ user.email }}" class="input input-bordered w-full opacity-70 cursor-not-allowed" disabled title="O e-mail não pode ser alterado por aqui." />
+                        <input type="email" value="{{ user.email }}"
+                            class="w-full px-4 py-3 bg-white/[0.02] border border-white/5 rounded-xl text-sm text-white/30 cursor-not-allowed outline-none"
+                            disabled title="O e-mail não pode ser alterado por aqui." />
                     </label>
 
                     <label class="form-control w-full">
-                        <div class="label"><span class="label-text font-medium">Telefone / WhatsApp</span></div>
-                        <input type="text" name="phone" value="{{ user.phone|default:'' }}" class="input input-bordered w-full" placeholder="(00) 00000-0000" />
+                        <div class="label mb-1"><span class="label-text font-semibold text-white/80">Telefone /
+                                WhatsApp</span></div>
+                        <input type="text" name="phone" value="{{ user.phone|default:'' }}"
+                            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/20"
+                            placeholder="(00) 00000-0000" />
                     </label>
 
                 </div>
 
                 <div id="profile-alert-container"></div>
 
-                <div class="card-actions justify-end mt-4">
-                    <button type="submit" class="btn btn-primary">
+                <div class="flex justify-center sm:justify-end mt-4">
+                    <button type="submit"
+                        class="btn bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 px-10 py-3 rounded-xl h-auto min-h-0 border-0 transition-all hover:scale-[1.02] active:scale-95 uppercase tracking-widest text-xs font-bold shadow-lg shadow-indigo-900/20">
                         Salvar Alterações
                     </button>
                 </div>

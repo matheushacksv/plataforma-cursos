@@ -243,12 +243,17 @@ def manage_students(request, curso_id):
         return HttpResponse('Acesso negado', status=403)
     
     curso = get_object_or_404(Course, id=curso_id)
+    query = request.GET.get('q', '').strip()
 
     matriculas = Enrollment.objects.filter(course=curso).order_by('-start_date')
 
+    if query:
+        matriculas = matriculas.filter(student__email__icontains=query)
+
     context = {
         'curso': curso,
-        'matriculas': matriculas
+        'matriculas': matriculas,
+        'query': query
     }
 
     return render(request, 'partials/_manage_students.html', context)
@@ -292,11 +297,17 @@ def add_student(request, curso_id):
                 print('url:', settings.CELERY_BROKER_URL)
                 enviar_email_1_acesso.delay(email, senha_aleatoria)
 
-    matriculas = Enrollment.objects.filter(course=curso). order_by('-start_date')
+    query = request.POST.get('q', '').strip() or request.GET.get('q', '').strip()
+
+    matriculas = Enrollment.objects.filter(course=curso).order_by('-start_date')
+
+    if query:
+        matriculas = matriculas.filter(student__email__icontains=query)
 
     context = {
         'curso': curso,
-        'matriculas': matriculas
+        'matriculas': matriculas,
+        'query': query
     }
 
     return render(request, 'partials/_manage_students.html', context)
@@ -316,11 +327,16 @@ def update_end_date(request, matricula_id):
 
         curso = matricula.course
 
+        query = request.POST.get('q', '').strip() or request.GET.get('q', '').strip()
         matriculas = Enrollment.objects.filter(course=curso).order_by('-start_date')
+
+        if query:
+            matriculas = matriculas.filter(student__email__icontains=query)
 
         context = {
             'curso': curso,
-            'matriculas': matriculas
+            'matriculas': matriculas,
+            'query': query
         }
 
         return render(request, 'partials/_manage_students.html', context)
@@ -340,11 +356,16 @@ def change_student_status(request, matricula_id):
 
         curso = matricula.course
 
+        query = request.POST.get('q', '').strip() or request.GET.get('q', '').strip()
         matriculas = Enrollment.objects.filter(course=curso).order_by('-start_date')
+
+        if query:
+            matriculas = matriculas.filter(student__email__icontains=query)
 
         context = {
             'curso': curso,
-            'matriculas': matriculas
+            'matriculas': matriculas,
+            'query': query
         }
 
         return render(request, 'partials/_manage_students.html', context)

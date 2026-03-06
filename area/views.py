@@ -664,6 +664,7 @@ def import_students(request, curso_id):
 @csrf_exempt
 @require_POST
 def webhook_kiwify(request):
+    print(request.body)
     try:
         data = json.loads(request.body)
 
@@ -680,7 +681,7 @@ def webhook_kiwify(request):
             product_data = payload.get('Product', {})
 
             email = customer_data.get('email')
-            full_name = customer_data.get('full_name', 'Aluno')
+            full_name = customer_data.get('full_name')
             kiwify_id = product_data.get('product_id')
 
             if not email or not kiwify_id:

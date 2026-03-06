@@ -29,7 +29,6 @@ urlpatterns = [
     path('course/<int:course_id>/edit/', edit_course, name='edit_course'),
     path('search-lessons/', search_lessons, name='search_lessons'),
     path('course/<int:curso_id>/reenviar-acesso', reenviar_acesso, name='reenviar_acesso'),
-    path('api/webhooks/kiwify/', webhook_kiwify, name='webhook_kiwify'),
     path('course/<int:curso_id>/import-students/', import_students, name='import_students'), 
     path('material/<int:material_id>/download/', download_material, name='download_material'),
     path('tickets/', suport_ticket, name='suport_ticket'),

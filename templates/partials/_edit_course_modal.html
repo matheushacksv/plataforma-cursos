@@ -24,8 +24,7 @@
             <label class="form-control w-full">
                 <div class="label"><span class="label-text font-medium text-white/80">Descrição</span></div>
                 <textarea name="description"
-                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/40 h-32"
-                    required>{{ curso.description }}</textarea>
+                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/40 h-32">{{ curso.description }}</textarea>
             </label>
 
             <label class="form-control w-full">
@@ -34,6 +33,20 @@
                 <input type="text" name="id_kiwify"
                     class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/40"
                     value="{{ curso.kiwify_product_id }}">
+            </label>
+
+            <label class="form-control w-full">
+                <div class="label"><span class="label-text font-medium text-white/80">URL do checkout</span></div>
+                <input type="url" name="checkout_url"
+                    class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/40"
+                    value="{{ curso.checkout_url }}">
+            </label>
+
+            <label class="form-control w-full">
+                <div class="label"><span class="label-text font-medium text-white/80">URL da página</span></div>
+                <input type="url" name="page_url"
+                    class="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white focus:outline-none focus:border-[#007bff] focus:bg-white/10 transition-all placeholder-white/40"
+                    value="{{ curso.page_url }}">
             </label>
 
             <div class="modal-action mt-6 gap-3">

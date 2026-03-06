@@ -132,5 +132,16 @@ def forgot_password_view(request):
 
     return render(request, 'forgot_password.html')
 
+@login_required(login_url='/login/')
+def edit_student_email(request, student_id):
+    student = CustomUser.objects.get(id=student_id)
 
+    if request.method == 'POST':
+        student.email = request.POST.get('email')
+        student.save()
+        
+        # We can send a trigger to show a notification if there's a global listener
+        response = HttpResponse("")
+        return response
+    
 

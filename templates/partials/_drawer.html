@@ -72,7 +72,7 @@
                     </button>
 
                     <form id="form-modulo" hx-post="{% url 'create_module' curso.id %}" hx-swap="innerHTML"
-                        hx-encodings="multipart/form-data">{% csrf_token %}
+                        hx-encoding="multipart/form-data">{% csrf_token %}
 
                         <fieldset
                             class="fieldset bg-black/20 border-white/10 rounded-box w-full border p-6 flex flex-col gap-4 mt-4 text-white">
@@ -242,19 +242,14 @@
 
                                     </div>
                                 </label>
-
-
                                 <div class="modal-action mt-6">
                                     <button type="button"
                                         class="btn btn-ghost hover:bg-error/20 hover:text-error transition-colors"
                                         @click="modalAula = false">Cancelar</button>
                                     <button type="submit"
                                         class="btn bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 whitespace-nowrap flex-nowrap px-6 py-2.5 rounded-xl h-fit w-fit transition-colors">Salvar</button>
+
                                 </div>
-
-                                </label>
-
-
                         </form>
 
                     </div>

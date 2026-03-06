@@ -1,2 +1,1 @@
-web: gunicorn core.wsgi
-worker: celery -A core worker -l info
+web: gunicorn core.wsgi --bind 0.0.0.0:$PORT

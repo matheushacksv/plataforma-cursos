@@ -19,7 +19,7 @@
                     :class="tab === 'novo' ? 'bg-[#007bff]/80 backdrop-blur-md text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:text-white hover:bg-white/5'"
                     @click="tab = 'novo'">
                     Abrir Chamado
-                </a>
+                </a>                
                 <a role="tab"
                     class="cursor-pointer px-4 py-2 text-sm font-semibold uppercase tracking-wide rounded-lg transition-all duration-300"
                     :class="tab === 'acompanhar' ? 'bg-[#007bff]/80 backdrop-blur-md text-white shadow-lg shadow-blue-900/20' : 'text-gray-400 hover:text-white hover:bg-white/5'"
@@ -31,6 +31,7 @@
 
             <!-- Tab: Abrir Chamado -->
             <div x-show="tab === 'novo'" x-transition>
+                <p class="text-sm text-blue-200 italic py-2">🔴 Levamos em torno de 24h para responder seu chamado</p>
                 <form id="form-suporte" hx-post="{% url 'suport_ticket' %}" hx-encoding="multipart/form-data"
                     hx-target="#mensagem-suporte" hx-swap="innerHTML">
                     {% csrf_token %}

@@ -20,11 +20,11 @@
         <div class="flex gap-4">
             
             <div class="avatar placeholder shrink-0">
-                <div class="bg-neutral text-neutral-content rounded-full w-12 h-12">
+                <div class="bg-neutral text-neutral-content rounded-full w-12 h-12 flex items-center justify-center">
                     {% if comment.author.avatar %}
                         <img src="{{ comment.author.avatar.url }}" alt="Avatar">
                     {% else %}
-                        <span class="text-xl uppercase">{{ comment.author.nome|default:comment.author.email|slice:":1" }}</span>
+                        <span class="text-lg font-medium uppercase font-heading">{{ comment.author.nome|default:comment.author.email|slice:":1" }}</span>
                     {% endif %}
                 </div>
             </div>

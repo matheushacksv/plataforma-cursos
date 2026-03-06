@@ -27,6 +27,8 @@ class Course(models.Model):
     image = models.ImageField(upload_to='course_img/', blank=True, null=True)
     description = models.TextField(help_text='Descrição do curso..', null=True, blank=True)
     categories = models.JSONField(default=list)
+    checkout_url = models.URLField(blank=True, null=True)
+    page_url = models.URLField(blank=True, null=True)
 
     kiwify_product_id = models.CharField(max_length=255, blank=True, null=True, unique=True, help_text='Cole aqui o ID do produto da Kiwify')
 

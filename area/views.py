@@ -21,13 +21,20 @@ import csv
 @login_required(login_url='/login/')
 def dashboard(request):
     if request.method == 'GET':
-
         matriculas = Enrollment.objects.filter(
             student=request.user,
-            is_active = True
+            is_active=True
         ).select_related('course')
 
-        return render(request, 'dashboard.html', {'matriculas': matriculas})
+        cursos_comprados_ids = matriculas.values_list('course_id', flat=True)
+        cursos_disponiveis = Course.objects.filter(active=True).exclude(id__in=cursos_comprados_ids)
+
+        context = {
+            'matriculas': matriculas,
+            'cursos_disponiveis': cursos_disponiveis
+        }
+
+        return render(request, 'dashboard.html', context)
     
     if request.method == 'POST':
 
@@ -36,6 +43,8 @@ def dashboard(request):
         image = request.FILES.get('imagem')
         categories = request.POST.getlist('categoria')
         kiwify_id = request.POST.get('id_kiwify')
+        checkout_url = request.POST.get('checkout_url')
+        page_url = request.POST.get('page_url')
         active = request.POST.get('ativo') == 'on'
 
         curso = Course.objects.create(
@@ -44,6 +53,8 @@ def dashboard(request):
             description=description,
             categories=categories,
             kiwify_product_id=kiwify_id,
+            checkout_url=checkout_url,
+            page_url=page_url,
             active=active
         )
 
@@ -127,55 +138,72 @@ def delete_course_img(request, curso_id):
 @login_required(login_url='/login/')
 def create_module(request, curso_id):
     if request.method == 'POST' and request.user.is_staff:
-        curso = get_object_or_404(Course, id=curso_id)
+        try:
+            curso = get_object_or_404(Course, id=curso_id)
+            titulo = request.POST.get('titulo')
 
-        current_max = Module.objects.filter(course=curso).aggregate(Max('order'))['order__max']
-        next_order = (current_max or 0) + 1
+            if not titulo:
+                return HttpResponse('<div class="alert alert-error text-xs p-2">Título é obrigatório</div>', status=400)
 
-        module = Module.objects.create(
-            course=curso,
-            title=request.POST.get('titulo'),
-            order=next_order
-        )
+            current_max = Module.objects.filter(course=curso).aggregate(Max('order'))['order__max']
+            next_order = (current_max or 0) + 1
 
-        response = HttpResponse(status=204)
-        response['HX-Trigger'] = 'gradeAtualizada'
+            Module.objects.create(
+                course=curso,
+                title=titulo,
+                order=next_order
+            )
 
-        return response
+            response = HttpResponse(status=204)
+            response['HX-Trigger'] = 'gradeAtualizada'
+
+            return response
+        except Exception as e:
+            return HttpResponse(f'<div class="alert alert-error text-xs p-2">Erro: {str(e)}</div>', status=500)
+
     return HttpResponse(status=400)
     
 @login_required(login_url='/login/')
 def create_lesson(request, curso_id):
     if request.method == 'POST' and request.user.is_staff:
-        
-        modulo_id = request.POST.get('modulo_id')
+        try:
+            modulo_id = request.POST.get('modulo_id')
+            titulo = request.POST.get('titulo')
 
-        modulo = get_object_or_404(Module, id=modulo_id, course_id=curso_id)
+            if not modulo_id:
+                return HttpResponse('<div class="alert alert-error text-xs p-2">Módulo não selecionado</div>', status=400)
+            
+            if not titulo:
+                return HttpResponse('<div class="alert alert-error text-xs p-2">Título é obrigatório</div>', status=400)
 
-        current_max = Lesson.objects.filter(module=modulo).aggregate(Max('order'))['order__max']
-        next_order = (current_max or 0) + 1
+            modulo = get_object_or_404(Module, id=modulo_id, course_id=curso_id)
 
-        lesson = Lesson.objects.create(
-            module=modulo,
-            title=request.POST.get('titulo'),
-            description=request.POST.get('descricao'),
-            video_url=request.POST.get('video_url'),
-            content=request.POST.get('content'),            
-            order=next_order
-        )
+            current_max = Lesson.objects.filter(module=modulo).aggregate(Max('order'))['order__max']
+            next_order = (current_max or 0) + 1
 
-        arquivos = request.FILES.getlist('attachments')
-
-        for arquivo in arquivos:
-            LessonMaterial.objects.create(
-                lesson=lesson,
-                file=arquivo
+            lesson = Lesson.objects.create(
+                module=modulo,
+                title=titulo,
+                description=request.POST.get('descricao'),
+                video_url=request.POST.get('video_url'),
+                content=request.POST.get('content'),            
+                order=next_order
             )
 
-        response = HttpResponse(status=204)
-        response['HX-Trigger'] = 'gradeAtualizada'
+            arquivos = request.FILES.getlist('attachments')
+            for arquivo in arquivos:
+                LessonMaterial.objects.create(
+                    lesson=lesson,
+                    file=arquivo
+                )
 
-        return response
+            response = HttpResponse(status=204)
+            response['HX-Trigger'] = 'gradeAtualizada'
+
+            return response
+        except Exception as e:
+            return HttpResponse(f'<div class="alert alert-error text-xs p-2">Erro: {str(e)}</div>', status=500)
+
     return HttpResponse(status=400)
     
 @login_required(login_url='/login/')
@@ -527,6 +555,8 @@ def edit_course(request, course_id):
         curso.title = request.POST.get('title')
         curso.description = request.POST.get('description')
         curso.kiwify_product_id = request.POST.get('id_kiwify')
+        curso.page_url = request.POST.get('page_url')
+        curso.checkout_url = request.POST.get('checkout_url')
         curso.save()
 
         response = HttpResponse(status=204)

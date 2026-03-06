@@ -121,10 +121,51 @@
                                     {% endif %}
                                 </div>
                             </div>
-                            <div>
-                                <div class="font-medium text-white text-sm tracking-wide">{{ matricula.student.email }}
+
+
+                            <div class="flex flex-col"
+                                x-data="{ editing: false, email: '{{ matricula.student.email }}' }">
+                                <div x-show="!editing" class="flex items-center gap-2">
+                                    <span class="font-medium text-white text-sm tracking-wide" x-text="email"></span>
+                                    <button @click="editing = true; $nextTick(() => $refs.emailInput.focus())"
+                                        class="text-white/30 hover:text-white transition-colors" title="Editar Email">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                            <path d="m15 5 4 4" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div x-show="editing" class="flex items-center gap-2" x-cloak>
+                                    <input type="email" x-model="email" x-ref="emailInput"
+                                        class="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-white/20"
+                                        name="email" hx-post="{% url 'edit_student_email' matricula.student.id %}"
+                                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-trigger="change"
+                                        hx-swap="none" @keyup.enter="$el.blur()"
+                                        @keyup.escape="editing = false; email = '{{ matricula.student.email }}'"
+                                        hx-on::after-request="if(event.detail.successful) editing = false">
+                                    <button @click="editing = false"
+                                        class="text-white/30 hover:text-white transition-colors" title="Salvar">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M20 6 9 17l-5-5" />
+                                        </svg>
+                                    </button>
+                                    <button @click="editing = false; email = '{{ matricula.student.email }}'"
+                                        class="text-white/30 hover:text-white transition-colors" title="Cancelar">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 6 6 18" />
+                                            <path d="m6 6 12 12" />
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
+
+
 
                         </div>
                     </td>

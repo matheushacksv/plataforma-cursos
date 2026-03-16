@@ -142,3 +142,6 @@ GitHub.sublime-settings
 design-system.html
 
 staticfiles/
+
+/tmp/verify_webhook.py
+/tmp/test_output.html

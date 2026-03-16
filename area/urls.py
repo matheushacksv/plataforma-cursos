@@ -34,5 +34,6 @@ urlpatterns = [
     path('tickets/', suport_ticket, name='suport_ticket'),
     path('tickets/list/', listar_tickets, name='listar_tickets'),
     path('tickets/<int:ticket_id>/', ticket_detail, name='ticket_detail'),
+    path('webhook/enroll/', new_students, name='enroll_user_webhook'),
 ]
 

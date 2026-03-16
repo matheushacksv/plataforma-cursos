@@ -663,8 +663,56 @@ def import_students(request, curso_id):
 
 @csrf_exempt
 @require_POST
+def new_students(request):
+    try:
+        data = json.loads(request.body)
+        email = data.get('email', '').strip().lower()
+        course_ids = data.get('course_ids', [])
+        nome = data.get('nome', '')
+
+        if not email or not isinstance(course_ids, list):
+            return JsonResponse({'erro': 'E-mail ou lista de IDs de curso inválidos'}, status=400)
+
+        user, created = CustomUser.objects.get_or_create(email=email)
+
+        if created:
+            if nome:
+                user.nome = nome
+            
+            senha_temporaria = secrets.token_urlsafe(16)
+            user.set_password(senha_temporaria)
+            user.save()
+
+            enviar_email_1_acesso.delay(email, senha_temporaria)
+
+        for course_id in course_ids:
+            try:
+                curso = Course.objects.get(id=course_id)
+                Enrollment.objects.get_or_create(
+                    student=user,
+                    course=curso,
+                    defaults={'is_active': True}
+                )
+            except Course.DoesNotExist:
+                continue
+
+        return JsonResponse({
+            'status': 'sucesso',
+            'usuario_criado': created,
+            'matriculas_processadas': len(course_ids)
+        }, status=200)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'erro': 'JSON Inválido'}, status=400)
+    except Exception as e:
+        return JsonResponse({'erro': str(e)}, status=500)
+
+    
+    
+
+@csrf_exempt
+@require_POST
 def webhook_kiwify(request):
-    print(request.body)
     try:
         data = json.loads(request.body)
 

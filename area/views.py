@@ -21,16 +21,20 @@ import csv
 @login_required(login_url='/login/')
 def dashboard(request):
     if request.method == 'GET':
-        matriculas = Enrollment.objects.filter(
-            student=request.user,
-            is_active=True
-        ).select_related('course')
-
-        cursos_comprados_ids = matriculas.values_list('course_id', flat=True)
-        cursos_disponiveis = Course.objects.filter(active=True).exclude(id__in=cursos_comprados_ids)
+        user = request.user
+        if user.is_staff or user.is_superuser:
+            cursos_comprados = Course.objects.all()
+            cursos_disponiveis = Course.objects.none()
+        else:
+            cursos_comprados = Course.objects.filter(
+                enrollment__student=user,
+                enrollment__is_active=True
+            ).distinct()
+            cursos_comprados_ids = cursos_comprados.values_list('id', flat=True)
+            cursos_disponiveis = Course.objects.filter(active=True).exclude(id__in=cursos_comprados_ids)
 
         context = {
-            'matriculas': matriculas,
+            'cursos_comprados': cursos_comprados,
             'cursos_disponiveis': cursos_disponiveis
         }
 
@@ -143,7 +147,7 @@ def create_module(request, curso_id):
             titulo = request.POST.get('titulo')
 
             if not titulo:
-                return HttpResponse('<div class="alert alert-error text-xs p-2">Título é obrigatório</div>', status=400)
+                return HttpResponse('<div class="alert alert-error text-xs p-2">Título é obrigatório</div>', status=200)
 
             current_max = Module.objects.filter(course=curso).aggregate(Max('order'))['order__max']
             next_order = (current_max or 0) + 1
@@ -171,10 +175,10 @@ def create_lesson(request, curso_id):
             titulo = request.POST.get('titulo')
 
             if not modulo_id:
-                return HttpResponse('<div class="alert alert-error text-xs p-2">Módulo não selecionado</div>', status=400)
+                return HttpResponse('<div class="alert alert-error text-xs p-2">Módulo não selecionado</div>', status=200)
             
             if not titulo:
-                return HttpResponse('<div class="alert alert-error text-xs p-2">Título é obrigatório</div>', status=400)
+                return HttpResponse('<div class="alert alert-error text-xs p-2">Título é obrigatório</div>', status=200)
 
             modulo = get_object_or_404(Module, id=modulo_id, course_id=curso_id)
 
@@ -471,7 +475,9 @@ def manage_curriculum(request, curso_id):
 def render_drawer(request, curso_id):
     curso = get_object_or_404(Course, id=curso_id)
 
-    return render(request, 'partials/_drawer.html', {'curso': curso})
+    response = render(request, 'partials/_drawer.html', {'curso': curso})
+    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response
 
 @login_required(login_url='/login/')
 def edit_lesson(request, lesson_id):

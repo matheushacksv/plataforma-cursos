@@ -17,15 +17,14 @@
     </div>
 
     <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-start">
-        {% for matricula in matriculas %}
-        {% if matricula.is_active == True or matricula.student.is_staff %}
+        {% for curso in cursos_comprados %}
 
         <div
             class="card glass-panel-base w-full rounded-2xl cursor-hover group relative overflow-hidden flex flex-col h-full border border-white/10 hover:border-white/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_15px_40px_rgba(0,123,255,0.15)] bg-black/20">
 
-            {% if matricula.course.image %}
+            {% if curso.image %}
             <figure class="relative h-48 overflow-hidden bg-white/5 border-b border-white/10 shrink-0">
-                <img src="{{ matricula.course.image.url }}" alt="{{ matricula.course.title }}"
+                <img src="{{ curso.image.url }}" alt="{{ curso.title }}"
                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
             </figure>
             {% else %}
@@ -43,29 +42,29 @@
             <div class="p-6 flex flex-col flex-grow">
                 <h2
                     class="font-heading text-xl font-medium mb-3 text-white tracking-tight group-hover:text-[#007bff] transition-colors line-clamp-2">
-                    {{ matricula.course.title }}</h2>
-                <p class="text-sm text-gray-400 leading-relaxed line-clamp-2 flex-grow">{{ matricula.course.description}}</p>
+                    {{ curso.title }}</h2>
+                <p class="text-sm text-gray-400 leading-relaxed line-clamp-2 flex-grow">{{ curso.description}}</p>
 
                 <div class="h-px bg-white/10 my-5 w-full"></div>
 
                 <div class="flex items-center justify-between w-full mt-auto">
 
-                    {% if matricula.student.is_staff %}
+                    {% if request.user.is_staff %}
                     <div class="flex items-center bg-black/40 rounded-lg p-1.5 border border-white/10 shadow-inner">
 
                         <div class="flex items-center gap-2 px-1" title="Ativar/Desativar Curso">
                             <input type="checkbox"
                                 class="toggle toggle-xs border-indigo-600 bg-indigo-500 checked:bg-indigo-600 checked:border-indigo-600"
-                                {% if matricula.course.active %}checked{% endif %}
-                                hx-post="{% url 'toggle_course' matricula.course.id %}"
+                                {% if curso.active %}checked{% endif %}
+                                hx-post="{% url 'toggle_course' curso.id %}"
                                 hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-swap="none">
                         </div>
 
                         <div class="w-px h-4 bg-white/20 mx-1.5"></div>
 
-                        <button hx-post="{% url 'delete_course' matricula.course.id %}"
+                        <button hx-post="{% url 'delete_course' curso.id %}"
                             hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                            hx-confirm="🚨 CUIDADO: Tem certeza que deseja excluir o curso '{{ matricula.course.title }}'?"
+                            hx-confirm="🚨 CUIDADO: Tem certeza que deseja excluir o curso '{{ curso.title }}'?"
                             hx-target="closest .card" hx-swap="outerHTML"
                             class="btn btn-ghost btn-xs btn-circle text-error hover:bg-error hover:text-white"
                             title="Deletar Curso">
@@ -80,12 +79,11 @@
                     <div></div>
                     {% endif %}
 
-                    <a href="{% url 'course_details' matricula.course.id %}"
+                    <a href="{% url 'course_details' curso.id %}"
                         class="bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 whitespace-nowrap flex-nowrap px-6 py-2.5 rounded-xl h-fit w-fit transition-colors">Acessar</a>
                 </div>
             </div>
         </div>
-        {% endif %}
         {% empty %}
         <div class="alert alert-info col-span-full">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

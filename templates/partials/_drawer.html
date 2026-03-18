@@ -19,7 +19,7 @@
                     <a class="cursor-hover flex items-center justify-between group hover:bg-white/10 hover:text-white rounded-lg transition-colors py-2 px-3"
                         hx-get="{% url 'lesson_details' aula.id %}" hx-target="#conteudo-principal" hx-swap="innerHTML">
 
-                        <span class="truncate pr-2 text-sm">{{ aula.title }}</span>
+                        <span class="truncate pr-2 text-sm">{{ aula.title|truncatewords:4 }}</span>
 
                         <span id="check-aula-{{ aula.id }}">
                             {% if aula.id in aulas_concluidas %}
@@ -71,13 +71,14 @@
                         ✕
                     </button>
 
-                    <form id="form-modulo" hx-post="{% url 'create_module' curso.id %}" hx-swap="innerHTML"
+                    <form id="form-modulo" hx-post="{% url 'create_module' curso.id %}" hx-target="#modulo-errors" hx-swap="innerHTML"
                         hx-encoding="multipart/form-data">{% csrf_token %}
 
                         <fieldset
                             class="fieldset bg-black/20 border-white/10 rounded-box w-full border p-6 flex flex-col gap-4 mt-4 text-white">
                             <legend class="fieldset-legend font-heading text-lg font-bold text-white">Detalhes do módulo
                             </legend>
+                            <div id="modulo-errors"></div>
 
                             <label class="form-control w-full">
                                 <div class="label">
@@ -134,13 +135,14 @@
                             ✕
                         </button>
 
-                        <form id="form-aula" hx-post="{% url 'create_lesson' curso.id %}" hx-swap="innerHTML"
+                        <form id="form-aula" hx-post="{% url 'create_lesson' curso.id %}" hx-target="#aula-errors" hx-swap="innerHTML"
                             hx-encoding="multipart/form-data">{% csrf_token %}
 
                             <fieldset
                                 class="fieldset bg-black/20 border-white/10 rounded-box w-full border p-6 flex flex-col gap-4 mt-4 text-white">
                                 <legend class="fieldset-legend font-heading text-lg font-bold text-white">Detalhes da
                                     aula</legend>
+                                <div id="aula-errors"></div>
 
                                 <label class="form-control w-full">
                                     <div class="label">
@@ -250,10 +252,12 @@
                                         class="btn bg-indigo-600 hover:bg-indigo-700 text-white shrink-0 whitespace-nowrap flex-nowrap px-6 py-2.5 rounded-xl h-fit w-fit transition-colors">Salvar</button>
 
                                 </div>
+                            </fieldset>
                         </form>
 
                     </div>
-
+                    
+                    <div class="modal-backdrop bg-black/50"></div>
                 </dialog>
             </template>
 

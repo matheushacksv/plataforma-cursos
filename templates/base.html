@@ -25,7 +25,8 @@
     <link rel="shortcut icon" href="https://s3.henriquegoularte.com.br/area-membros/logo-light.png">
 
     <script>
-        document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "night")
+        localStorage.removeItem("theme");
+        document.documentElement.setAttribute("data-theme", "light");
     </script>
 
     <meta name="htmx-config" content='{"headers":{"X-CSRFToken":"{{ csrf_token }}"}}'>
